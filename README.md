@@ -1,0 +1,1 @@
+Projeto para auxiliar a criação de planilhas de itens para pregões. Mais instruções serão adicionadas mais tarde.
