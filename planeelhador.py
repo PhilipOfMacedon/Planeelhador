@@ -47,7 +47,7 @@ class TopLevelFormulario:
 
         vcmd = (top.register(self.number_mask))
 
-        top.geometry("640x576+383+120")
+        top.geometry("720x576+383+120")
         top.minsize(120, 1)
         top.maxsize(3844, 1061)
         top.resizable(1,  1)
@@ -180,7 +180,7 @@ class TopLevelFormulario:
         self.Label3.configure(foreground="#000000")
         self.Label3.configure(highlightbackground="#d9d9d9")
         self.Label3.configure(highlightcolor="#000000")
-        self.Label3.configure(text='''Data de abertura:''')
+        self.Label3.configure(text='''Data/hora de abertura:''')
 
         self.Label6 = tk.Label(self.Labelframe1)
         self.Label6.place(relx=0.032, rely=0.595, height=21, width=124
