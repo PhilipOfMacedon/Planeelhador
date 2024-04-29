@@ -43,6 +43,30 @@ class TopLevelFormulario:
     def button_atualizar_callback(self):
         print(self.qtd.get())
 
+    def tkVars2Integers(self):
+        if self.agrupamento.get() == 0: return None
+        arr = []
+        count = 0
+        for tkVar in self.lotesQtd:
+            if (count == int(self.qtd.get())): break
+            arr.append(tkVar.get())
+        return arr
+
+    def getFormInfo(self):
+
+        return {
+            "orgao": self.orgao.get(),
+            "codLicitacao": self.codLicitacao.get(),
+            "codProcesso": self.codProcesso.get(),
+            "dataAbertura": self.dataAbertura.get(),
+            "horaAbertura": self.horaAbertura.get(),
+            "empresa": self.empresa.get(),
+            "tipo": self.tipo.get(),
+            "agrupamento": self.agrupamento.get(),
+            "qtd": self.qtd.get(),
+            "lotesQtd": self.tkVars2Integers()
+        }
+
     def __init__(self, top=None):
         '''This class configures and populates the toplevel window.
            top is the toplevel containing window.'''
@@ -70,7 +94,7 @@ class TopLevelFormulario:
         self.tipo = tk.IntVar()
         self.agrupamento = tk.IntVar()
         self.qtd = tk.StringVar()
-        self.lotesQtd = np.empty(_maxLotes, dtype=tk.IntVar)
+        self.lotesQtd = [None] * _maxLotes
         
 
         self.Labelframe1 = tk.LabelFrame(self.top)
