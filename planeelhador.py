@@ -12,6 +12,7 @@ import tkinter.ttk as ttk
 import customtkinter as ctk
 from tkinter.constants import *
 import os.path
+import math
 
 _location = os.path.dirname(__file__)
 
@@ -22,7 +23,7 @@ _tabfg2 = 'white'
 _bgmode = 'light' 
 _tabbg1 = '#d9d9d9' 
 _tabbg2 = 'gray40' 
-_maxLotes = 25
+_lotesSpacing = 40
 
 class TopLevelFormulario:
 
@@ -35,7 +36,7 @@ class TopLevelFormulario:
             self.ButtonAtualizar.configure(state='normal')
             self.LabelQtd.configure(text='''Qtd. de lotes:''')
             self.button_atualizar_callback()
-        
+
     def number_mask(self, P):
         if str.isdigit(P) or P == "":
             return True
@@ -48,11 +49,35 @@ class TopLevelFormulario:
             qtd = int(self.qtd.get())
         except:
             qtd = 0
-        print(qtd)
-        self.lotesQtd = []
-        for i in range(qtd):
-            self.lotesQtd.append(tk.IntVar())
+        if qtd > 0:
+            self.CanvasLotesQtd.grid_columnconfigure(0, weight=1)
+            self.CanvasLotesQtd.grid_columnconfigure(1, weight=8)
+            self.CanvasLotesQtd.grid_rowconfigure(0, weight=1)
 
+            self.LabelsLote = []
+            self.EntriesLote = []
+            self.lotesQtd = []
+
+            posX = 5
+            posY = 5
+            entryPosX = int(30 + 5 * (1 + math.floor(math.log10(qtd))))
+
+            for i in range(qtd):
+                tVar = tk.IntVar()
+                self.lotesQtd.append(tVar)
+
+                nomeLote = "Lote " + str(i)
+                LabelLote = ctk.CTkLabel(self.CanvasLotesQtd, text=nomeLote)
+                LabelLote.grid(row=0, column=0)
+                self.LabelsLote.append(LabelLote)
+
+                EntryLote = ctk.CTkEntry(self.CanvasLotesQtd)
+                EntryLote.grid(row=0, column=1)
+                EntryLote.configure(textvariable=tVar)
+                self.EntriesLote.append(EntryLote)
+
+                posY += _lotesSpacing
+            
     def button_criar_callback(self):
         self.exitStatus = True
         self.top.destroy()
@@ -549,14 +574,19 @@ class TopLevelFormulario:
         self.ButtonAtualizar.configure(text='''Atualizar''')
         self.ButtonAtualizar.configure(command=lambda:self.button_atualizar_callback())
 
-        self.CanvasLotesQtd = tk.Canvas(self.LabelframeQtd)
-        self.CanvasLotesQtd.place(relx=0.047, rely=0.253, relheight=0.69
-                , relwidth=0.902, bordermode='ignore')
-        self.CanvasLotesQtd.configure(background="#d9d9d9")
-        self.CanvasLotesQtd.configure(borderwidth="2")
-        self.CanvasLotesQtd.configure(highlightbackground="#d9d9d9")
-        self.CanvasLotesQtd.configure(highlightcolor="#000000")
-        self.CanvasLotesQtd.configure(insertbackground="#000000")
-        self.CanvasLotesQtd.configure(relief="ridge")
-        self.CanvasLotesQtd.configure(selectbackground="#d9d9d9")
-        self.CanvasLotesQtd.configure(selectforeground="black")
+        self.CanvasLotesQtd = ctk.CTkScrollableFrame(self.LabelframeQtd)
+        self.CanvasLotesQtd.place(relx=0.048, rely=0.253, relheight=0.691
+                , relwidth=0.9, bordermode='ignore')
+        self.CanvasLotesQtd.configure(fg_color="#d9d9d9")
+        self.CanvasLotesQtd.configure(border_width=2)
+        self.CanvasLotesQtd.configure(corner_radius=1)
+        #self.CanvasLotesQtd.configure(highlightbackground="#d9d9d9")
+        #self.CanvasLotesQtd.configure(highlightcolor="#000000")
+        #self.CanvasLotesQtd.configure(insertbackground="#000000")
+        #self.CanvasLotesQtd.configure(relief="ridge")
+        #self.CanvasLotesQtd.configure(selectbackground="#d9d9d9")
+        #self.CanvasLotesQtd.configure(selectforeground="black")
+        
+
+        self.LabelsLote = []
+        self.EntriesLote = []
