@@ -30,9 +30,11 @@ class TopLevelFormulario:
         if (self.agrupamento.get() == 0):
             self.ButtonAtualizar.configure(state='disabled')
             self.LabelQtd.configure(text='''Qtd. de itens:''')
+            self.lotesQtd = []
         else:
             self.ButtonAtualizar.configure(state='normal')
             self.LabelQtd.configure(text='''Qtd. de lotes:''')
+            self.button_atualizar_callback()
         
     def number_mask(self, P):
         if str.isdigit(P) or P == "":
@@ -41,7 +43,19 @@ class TopLevelFormulario:
             return False
 
     def button_atualizar_callback(self):
-        print(self.qtd.get())
+        qtd = 0
+        try:
+            qtd = int(self.qtd.get())
+        except:
+            qtd = 0
+        print(qtd)
+        self.lotesQtd = []
+        for i in range(qtd):
+            self.lotesQtd.append(tk.IntVar())
+
+    def button_criar_callback(self):
+        self.exitStatus = True
+        self.top.destroy()
 
     def tkVars2Integers(self):
         if self.agrupamento.get() == 0: return None
@@ -84,6 +98,7 @@ class TopLevelFormulario:
         
         ctk.set_appearance_mode("light")
 
+        self.exitStatus = False
         self.top = top
         self.orgao = tk.StringVar()
         self.codLicitacao = tk.StringVar()
@@ -94,7 +109,7 @@ class TopLevelFormulario:
         self.tipo = tk.IntVar()
         self.agrupamento = tk.IntVar()
         self.qtd = tk.StringVar()
-        self.lotesQtd = [None] * _maxLotes
+        self.lotesQtd = []
         
 
         self.Labelframe1 = tk.LabelFrame(self.top)
@@ -297,6 +312,7 @@ class TopLevelFormulario:
         self.ButtonCriar.configure(highlightbackground="#d9d9d9")
         self.ButtonCriar.configure(highlightcolor="#000000")
         self.ButtonCriar.configure(text='''Criar modelo personalizado''')
+        self.ButtonCriar.configure(command=lambda:self.button_criar_callback())
 
         self.Label6 = tk.Label(self.Labelframe1)
         self.Label6.place(relx=0.032, rely=0.595, height=21, width=126

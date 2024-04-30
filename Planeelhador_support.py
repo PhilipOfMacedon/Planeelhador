@@ -24,8 +24,9 @@ def main(*args):
     _top1 = root
     _w1 = TopLevelFormulario(_top1)
     root.mainloop()
-    print("Runnig?")
-    print(_w1.getFormInfo()["orgao"])
+    if (_w1.exitStatus):
+        print("Success!")
+        print(_w1.getFormInfo())
     
 if __name__ == "__main__":
     main()
