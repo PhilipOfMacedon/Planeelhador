@@ -23,19 +23,26 @@ _tabfg2 = 'white'
 _bgmode = 'light' 
 _tabbg1 = '#d9d9d9' 
 _tabbg2 = 'gray40' 
-_lotesSpacing = 40
+_lotesSpan = 6
 
 class TopLevelFormulario:
+
+    def removeAllLotes(self):
+        self.FramesLote = []
+        self.LabelsLote = []
+        self.EntriesLote = []
+        self.lotesQtd = []
 
     def agrupamento_radio_change(self):
         if (self.agrupamento.get() == 0):
             self.ButtonAtualizar.configure(state='disabled')
+            self.LabelframeQtd.configure(text='''Menor preço por Item''')
             self.LabelQtd.configure(text='''Qtd. de itens:''')
-            self.lotesQtd = []
+            self.removeAllLotes()
         else:
             self.ButtonAtualizar.configure(state='normal')
+            self.LabelframeQtd.configure(text='''Menor preço por Lote''')
             self.LabelQtd.configure(text='''Qtd. de lotes:''')
-            self.button_atualizar_callback()
 
     def number_mask(self, P):
         if str.isdigit(P) or P == "":
@@ -50,33 +57,39 @@ class TopLevelFormulario:
         except:
             qtd = 0
         if qtd > 0:
-            self.CanvasLotesQtd.grid_columnconfigure(0, weight=1)
-            self.CanvasLotesQtd.grid_columnconfigure(1, weight=8)
-            self.CanvasLotesQtd.grid_rowconfigure(0, weight=1)
+            FontLabel = ctk.CTkFont(family="Segoe UI", size=12)
+            FontEntry = ctk.CTkFont(family="Courier New", size=12)
 
-            self.LabelsLote = []
-            self.EntriesLote = []
-            self.lotesQtd = []
-
-            posX = 5
-            posY = 5
-            entryPosX = int(30 + 5 * (1 + math.floor(math.log10(qtd))))
+            self.removeAllLotes()
 
             for i in range(qtd):
                 tVar = tk.IntVar()
                 self.lotesQtd.append(tVar)
 
-                nomeLote = "Lote " + str(i)
-                LabelLote = ctk.CTkLabel(self.CanvasLotesQtd, text=nomeLote)
-                LabelLote.grid(row=0, column=0)
+                FrameLote = ctk.CTkFrame(master=self.CanvasLotesQtd)
+                FrameLote.grid(row=i, column=0, sticky='ew')
+                self.FramesLote.append(FrameLote)
+
+                nomeLote = "Lote " + str(i+1) + ":"
+                LabelLote = ctk.CTkLabel(master=FrameLote, text=nomeLote)
+                LabelLote.grid(row=0, column=0, padx=5, pady=5, sticky='nsew')
+                LabelLote.configure(font=FontLabel)
                 self.LabelsLote.append(LabelLote)
 
-                EntryLote = ctk.CTkEntry(self.CanvasLotesQtd)
-                EntryLote.grid(row=0, column=1)
+                EntryLote = ctk.CTkEntry(master=FrameLote)
+                EntryLote.grid(row=0, column=1, padx=5, pady=5, columnspan=_lotesSpan-1, sticky="nsew")
+                EntryLote.configure(corner_radius=0)
                 EntryLote.configure(textvariable=tVar)
+                EntryLote.configure(border_width=1)
+                EntryLote.configure(font=FontEntry)
                 self.EntriesLote.append(EntryLote)
+                self.CanvasLotesQtd.grid_rowconfigure(i, weight=1)
+                
+                for i in range(_lotesSpan):
+                    FrameLote.grid_columnconfigure(i, weight=1, uniform="foo")
+                
+                self.CanvasLotesQtd.columnconfigure(0, weight=1)
 
-                posY += _lotesSpacing
             
     def button_criar_callback(self):
         self.exitStatus = True
@@ -579,7 +592,8 @@ class TopLevelFormulario:
                 , relwidth=0.9, bordermode='ignore')
         self.CanvasLotesQtd.configure(fg_color="#d9d9d9")
         self.CanvasLotesQtd.configure(border_width=2)
-        self.CanvasLotesQtd.configure(corner_radius=1)
+        self.CanvasLotesQtd.configure(corner_radius=0)
+        self.CanvasLotesQtd.configure(border_width=1)
         #self.CanvasLotesQtd.configure(highlightbackground="#d9d9d9")
         #self.CanvasLotesQtd.configure(highlightcolor="#000000")
         #self.CanvasLotesQtd.configure(insertbackground="#000000")
@@ -587,6 +601,6 @@ class TopLevelFormulario:
         #self.CanvasLotesQtd.configure(selectbackground="#d9d9d9")
         #self.CanvasLotesQtd.configure(selectforeground="black")
         
-
+        self.FramesLote = []
         self.LabelsLote = []
         self.EntriesLote = []
