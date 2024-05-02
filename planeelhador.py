@@ -57,6 +57,7 @@ class TopLevelFormulario:
         except:
             qtd = 0
         if qtd > 0:
+            vcmd = self.CanvasLotesQtd.register(self.number_mask)
             FontLabel = ctk.CTkFont(family="Segoe UI", size=12)
             FontEntry = ctk.CTkFont(family="Courier New", size=12)
 
@@ -82,6 +83,9 @@ class TopLevelFormulario:
                 EntryLote.configure(textvariable=tVar)
                 EntryLote.configure(border_width=1)
                 EntryLote.configure(font=FontEntry)
+                EntryLote.configure(validate='all')
+                EntryLote.configure(validatecommand=(vcmd, '%P'))
+                EntryLote.delete(0, tk.END)
                 self.EntriesLote.append(EntryLote)
                 self.CanvasLotesQtd.grid_rowconfigure(i, weight=1)
                 
@@ -99,9 +103,17 @@ class TopLevelFormulario:
         if self.agrupamento.get() == 0: return None
         arr = []
         count = 0
+        
         for tkVar in self.lotesQtd:
-            if (count == int(self.qtd.get())): break
-            arr.append(tkVar.get())
+            try:
+                if (count == int(self.qtd.get())): break
+            except:
+                print("Nothing to do here then.")
+                break
+            try:
+                arr.append(tkVar.get())
+            except:
+                arr.append(0)
         return arr
 
     def getFormInfo(self):
