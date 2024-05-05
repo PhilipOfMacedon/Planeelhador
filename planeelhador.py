@@ -10,9 +10,11 @@ import numpy as np
 import tkinter as tk
 import tkinter.ttk as ttk
 import customtkinter as ctk
+from ctk_maskedentry import CTkMaskedEntry, Mask
 from tkinter.constants import *
 import os.path
 import math
+from datetime import datetime
 
 _location = os.path.dirname(__file__)
 
@@ -24,6 +26,13 @@ _bgmode = 'light'
 _tabbg1 = '#d9d9d9' 
 _tabbg2 = 'gray40' 
 _lotesSpan = 6
+
+def is_valid_datetime(date_string, date_format):
+    try:
+        datetime.strptime(date_string, date_format)
+        return True
+    except ValueError:
+        return False
 
 class TopLevelFormulario:
 
@@ -58,8 +67,6 @@ class TopLevelFormulario:
             qtd = 0
         if qtd > 0:
             vcmd = self.CanvasLotesQtd.register(self.number_mask)
-            FontLabel = ctk.CTkFont(family="Segoe UI", size=12)
-            FontEntry = ctk.CTkFont(family="Courier New", size=12)
 
             self.removeAllLotes()
 
@@ -74,7 +81,7 @@ class TopLevelFormulario:
                 nomeLote = "Lote " + str(i+1) + ":"
                 LabelLote = ctk.CTkLabel(master=FrameLote, text=nomeLote)
                 LabelLote.grid(row=0, column=0, padx=5, pady=5, sticky='nsew')
-                LabelLote.configure(font=FontLabel)
+                LabelLote.configure(font=self.FontLabel)
                 self.LabelsLote.append(LabelLote)
 
                 EntryLote = ctk.CTkEntry(master=FrameLote)
@@ -82,7 +89,7 @@ class TopLevelFormulario:
                 EntryLote.configure(corner_radius=0)
                 EntryLote.configure(textvariable=tVar)
                 EntryLote.configure(border_width=1)
-                EntryLote.configure(font=FontEntry)
+                EntryLote.configure(font=self.FontEntry)
                 EntryLote.configure(validate='all')
                 EntryLote.configure(validatecommand=(vcmd, '%P'))
                 EntryLote.delete(0, tk.END)
@@ -96,8 +103,25 @@ class TopLevelFormulario:
 
             
     def button_criar_callback(self):
-        self.exitStatus = True
-        self.top.destroy()
+        if self.orgao.get() == "":
+            tk.messagebox.showwarning("Atenção", "Falta o nome do órgão!")
+        elif self.codLicitacao.get() == "":
+            tk.messagebox.showwarning("Atenção", "Falta o número da licitação!")
+        elif self.dataAbertura.get() == "":
+            tk.messagebox.showwarning("Atenção", "Falta a data da licitação!")
+        elif not is_valid_datetime(self.dataAbertura.get(), "%d/%m/%Y"):
+            tk.messagebox.showwarning("Atenção", "Insira uma data válida!")
+        elif not is_valid_datetime(self.horaAbertura.get(), "%H:%M"):
+            tk.messagebox.showwarning("Atenção", "Insira um horário válido!")
+        elif self.agrupamento.get() == 0 and self.qtd.get() == "":
+            tk.messagebox.showwarning("Atenção", "Insira a quantidade de itens!")
+        elif self.agrupamento.get() == 1 and (self.qtd.get() == "" or not self.lotesQtd):
+            tk.messagebox.showwarning("Atenção", "Se estiver trabalhando com lotes, insira a quantidade e atualize a lista!")
+        elif self.agrupamento.get() == 1 and int(self.qtd.get()) != len(self.lotesQtd):
+            tk.messagebox.showwarning("Atenção", "A quantidade de lotes não bate com o número de campos, atualize a lista!")
+        else:
+            self.exitStatus = True
+            self.top.destroy()
 
     def tkVars2Integers(self):
         if self.agrupamento.get() == 0: return None
@@ -135,6 +159,9 @@ class TopLevelFormulario:
         '''This class configures and populates the toplevel window.
            top is the toplevel containing window.'''
 
+        self.FontLabel = ctk.CTkFont(family="Segoe UI", size=12)
+        self.FontEntry = ctk.CTkFont(family="Courier New", size=12)
+
         vcmd = (top.register(self.number_mask))
 
         top.geometry("645x588+383+93")
@@ -155,13 +182,18 @@ class TopLevelFormulario:
         self.codProcesso = tk.StringVar()
         self.dataAbertura = tk.StringVar()
         self.horaAbertura = tk.StringVar()
-        self.empresa = tk.IntVar()
-        self.tipo = tk.IntVar()
+        self.empresa = tk.StringVar()
+        self.tipo = tk.StringVar()
         self.agrupamento = tk.IntVar()
         self.qtd = tk.StringVar()
         self.lotesQtd = []
         
-
+        self.empresa.set("GI")
+        self.tipo.set("PREGÃO")
+        
+        dateMask = Mask('fixed', '99/99/9999')
+        timeMask = Mask('fixed', '99:99')
+        
         self.Labelframe1 = tk.LabelFrame(self.top)
         self.Labelframe1.place(relx=0.016, rely=0.015, relheight=0.957
                 , relwidth=0.972)
@@ -203,7 +235,7 @@ class TopLevelFormulario:
         self.RadioID.configure(highlightcolor="#000000")
         self.RadioID.configure(justify='left')
         self.RadioID.configure(text='''Info Direct''')
-        self.RadioID.configure(value='1')
+        self.RadioID.configure(value='ID')
         self.RadioID.configure(variable=self.empresa)
 
         self.RadioEC = tk.Radiobutton(self.Labelframe1)
@@ -221,26 +253,26 @@ class TopLevelFormulario:
         self.RadioEC.configure(highlightcolor="#000000")
         self.RadioEC.configure(justify='left')
         self.RadioEC.configure(text='''Embacom''')
-        self.RadioEC.configure(value='2')
+        self.RadioEC.configure(value='EC')
         self.RadioEC.configure(variable=self.empresa)
 
-        self.Radiobutton1 = tk.Radiobutton(self.Labelframe1)
-        self.Radiobutton1.place(relx=0.032, rely=0.865, relheight=0.044
+        self.RadioGC = tk.Radiobutton(self.Labelframe1)
+        self.RadioGC.place(relx=0.032, rely=0.865, relheight=0.044
                 , relwidth=0.191, bordermode='ignore')
-        self.Radiobutton1.configure(activebackground="#d9d9d9")
-        self.Radiobutton1.configure(activeforeground="black")
-        self.Radiobutton1.configure(anchor='w')
-        self.Radiobutton1.configure(background="#d9d9d9")
-        self.Radiobutton1.configure(compound='left')
-        self.Radiobutton1.configure(disabledforeground="#a3a3a3")
-        self.Radiobutton1.configure(font="-family {Segoe UI} -size 9")
-        self.Radiobutton1.configure(foreground="#000000")
-        self.Radiobutton1.configure(highlightbackground="#d9d9d9")
-        self.Radiobutton1.configure(highlightcolor="#000000")
-        self.Radiobutton1.configure(justify='left')
-        self.Radiobutton1.configure(text='''Gold Comércio''')
-        self.Radiobutton1.configure(value='3')
-        self.Radiobutton1.configure(variable=self.empresa)
+        self.RadioGC.configure(activebackground="#d9d9d9")
+        self.RadioGC.configure(activeforeground="black")
+        self.RadioGC.configure(anchor='w')
+        self.RadioGC.configure(background="#d9d9d9")
+        self.RadioGC.configure(compound='left')
+        self.RadioGC.configure(disabledforeground="#a3a3a3")
+        self.RadioGC.configure(font="-family {Segoe UI} -size 9")
+        self.RadioGC.configure(foreground="#000000")
+        self.RadioGC.configure(highlightbackground="#d9d9d9")
+        self.RadioGC.configure(highlightcolor="#000000")
+        self.RadioGC.configure(justify='left')
+        self.RadioGC.configure(text='''Gold Comércio''')
+        self.RadioGC.configure(value='GC')
+        self.RadioGC.configure(variable=self.empresa)
 
         self.RadioGI = tk.Radiobutton(self.Labelframe1)
         self.RadioGI.place(relx=0.032, rely=0.757, relheight=0.046, relwidth=0.19
@@ -257,7 +289,7 @@ class TopLevelFormulario:
         self.RadioGI.configure(highlightcolor="#000000")
         self.RadioGI.configure(justify='left')
         self.RadioGI.configure(text='''Gráfica Iguaçu''')
-        self.RadioGI.configure(value='0')
+        self.RadioGI.configure(value='GI')
         self.RadioGI.configure(variable=self.empresa)
 
         self.RadioDispensa = tk.Radiobutton(self.Labelframe1)
@@ -275,7 +307,7 @@ class TopLevelFormulario:
         self.RadioDispensa.configure(highlightcolor="#000000")
         self.RadioDispensa.configure(justify='left')
         self.RadioDispensa.configure(text='''Dispensa''')
-        self.RadioDispensa.configure(value='1')
+        self.RadioDispensa.configure(value='DISPENSA')
         self.RadioDispensa.configure(variable=self.tipo)
 
         self.RadioCotacao = tk.Radiobutton(self.Labelframe1)
@@ -293,7 +325,7 @@ class TopLevelFormulario:
         self.RadioCotacao.configure(highlightcolor="#000000")
         self.RadioCotacao.configure(justify='left')
         self.RadioCotacao.configure(text='''Cotação''')
-        self.RadioCotacao.configure(value='2')
+        self.RadioCotacao.configure(value='COTAÇÃO')
         self.RadioCotacao.configure(variable=self.tipo)
 
         self.RadioPregao = tk.Radiobutton(self.Labelframe1)
@@ -311,7 +343,7 @@ class TopLevelFormulario:
         self.RadioPregao.configure(highlightcolor="#000000")
         self.RadioPregao.configure(justify='left')
         self.RadioPregao.configure(text='''Pregão''')
-        self.RadioPregao.configure(value='0')
+        self.RadioPregao.configure(value='PREGÃO')
         self.RadioPregao.configure(variable=self.tipo)
 
         self.RadioPorLote = tk.Radiobutton(self.Labelframe1)
@@ -351,8 +383,8 @@ class TopLevelFormulario:
         self.RadioPorItem.configure(command=lambda:self.agrupamento_radio_change())
 
         self.ButtonCriar = tk.Button(self.Labelframe1)
-        self.ButtonCriar.place(relx=0.032, rely=0.918, height=26, width=577
-                , bordermode='ignore')
+        self.ButtonCriar.place(relx=0.032, rely=0.918, height=26
+                , relwidth=0.933, bordermode='ignore')
         self.ButtonCriar.configure(activebackground="#d9d9d9")
         self.ButtonCriar.configure(activeforeground="black")
         self.ButtonCriar.configure(background="#d9d9d9")
@@ -481,18 +513,21 @@ class TopLevelFormulario:
         self.Label3.configure(highlightcolor="#000000")
         self.Label3.configure(text='''Data de abertura:''')
 
-        self.EntryDataAbertura = tk.Entry(self.Labelframe1)
-        self.EntryDataAbertura.place(relx=0.032, rely=0.284, height=20
+        self.EntryDataAbertura = CTkMaskedEntry(self.Labelframe1, height=20, mask=dateMask)
+        self.EntryDataAbertura.place(relx=0.032, rely=0.284
                 , relwidth=0.198, bordermode='ignore')
-        self.EntryDataAbertura.configure(background="white")
-        self.EntryDataAbertura.configure(disabledforeground="#a3a3a3")
-        self.EntryDataAbertura.configure(font="TkFixedFont")
-        self.EntryDataAbertura.configure(foreground="#000000")
-        self.EntryDataAbertura.configure(highlightbackground="#d9d9d9")
-        self.EntryDataAbertura.configure(highlightcolor="#000000")
-        self.EntryDataAbertura.configure(insertbackground="#000000")
-        self.EntryDataAbertura.configure(selectbackground="#d9d9d9")
-        self.EntryDataAbertura.configure(selectforeground="black")
+        self.EntryDataAbertura.configure(corner_radius=0)
+        self.EntryDataAbertura.configure(border_width=1)
+        self.EntryDataAbertura.configure(font=self.FontEntry)
+        #self.EntryDataAbertura.configure(background="white")
+        #self.EntryDataAbertura.configure(disabledforeground="#a3a3a3")
+        #self.EntryDataAbertura.configure(font="TkFixedFont")
+        #self.EntryDataAbertura.configure(foreground="#000000")
+        #self.EntryDataAbertura.configure(highlightbackground="#d9d9d9")
+        #self.EntryDataAbertura.configure(highlightcolor="#000000")
+        #self.EntryDataAbertura.configure(insertbackground="#000000")
+        #self.EntryDataAbertura.configure(selectbackground="#d9d9d9")
+        #self.EntryDataAbertura.configure(selectforeground="black")
         self.EntryDataAbertura.configure(textvariable=self.dataAbertura)
 
         self.Label8 = tk.Label(self.Labelframe1)
@@ -509,18 +544,21 @@ class TopLevelFormulario:
         self.Label8.configure(highlightcolor="#000000")
         self.Label8.configure(text='''Hora de abertura:''')
 
-        self.EntryHoraAbertura = tk.Entry(self.Labelframe1)
-        self.EntryHoraAbertura.place(relx=0.032, rely=0.355, height=20
+        self.EntryHoraAbertura = CTkMaskedEntry(self.Labelframe1, height=20, mask=timeMask)
+        self.EntryHoraAbertura.place(relx=0.032, rely=0.355 
                 , relwidth=0.198, bordermode='ignore')
-        self.EntryHoraAbertura.configure(background="white")
-        self.EntryHoraAbertura.configure(disabledforeground="#a3a3a3")
-        self.EntryHoraAbertura.configure(font="-family {Courier New} -size 10")
-        self.EntryHoraAbertura.configure(foreground="#000000")
-        self.EntryHoraAbertura.configure(highlightbackground="#d9d9d9")
-        self.EntryHoraAbertura.configure(highlightcolor="#000000")
-        self.EntryHoraAbertura.configure(insertbackground="#000000")
-        self.EntryHoraAbertura.configure(selectbackground="#d9d9d9")
-        self.EntryHoraAbertura.configure(selectforeground="black")
+        self.EntryHoraAbertura.configure(corner_radius=0)
+        self.EntryHoraAbertura.configure(border_width=1)
+        self.EntryHoraAbertura.configure(font=self.FontEntry)
+        #self.EntryHoraAbertura.configure(background="white")
+        #self.EntryHoraAbertura.configure(disabledforeground="#a3a3a3")
+        #self.EntryHoraAbertura.configure(font="-family {Courier New} -size 10")
+        #self.EntryHoraAbertura.configure(foreground="#000000")
+        #self.EntryHoraAbertura.configure(highlightbackground="#d9d9d9")
+        #self.EntryHoraAbertura.configure(highlightcolor="#000000")
+        #self.EntryHoraAbertura.configure(insertbackground="#000000")
+        #self.EntryHoraAbertura.configure(selectbackground="#d9d9d9")
+        #self.EntryHoraAbertura.configure(selectforeground="black")
         self.EntryHoraAbertura.configure(textvariable=self.horaAbertura)
 
         #_style_code()
@@ -603,7 +641,6 @@ class TopLevelFormulario:
         self.CanvasLotesQtd.place(relx=0.048, rely=0.253, relheight=0.691
                 , relwidth=0.9, bordermode='ignore')
         self.CanvasLotesQtd.configure(fg_color="#d9d9d9")
-        self.CanvasLotesQtd.configure(border_width=2)
         self.CanvasLotesQtd.configure(corner_radius=0)
         self.CanvasLotesQtd.configure(border_width=1)
         #self.CanvasLotesQtd.configure(highlightbackground="#d9d9d9")
