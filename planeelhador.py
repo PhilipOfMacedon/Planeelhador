@@ -12,9 +12,12 @@ import tkinter.ttk as ttk
 import customtkinter as ctk
 from ctk_maskedentry import CTkMaskedEntry, Mask
 from tkinter.constants import *
+from tkinter import filedialog
 import os.path
 import math
 from datetime import datetime
+
+from PlaneelhaOutputer import  PlaneelhaOutputer
 
 _location = os.path.dirname(__file__)
 
@@ -101,8 +104,7 @@ class TopLevelFormulario:
                 
                 self.CanvasLotesQtd.columnconfigure(0, weight=1)
 
-            
-    def button_criar_callback(self):
+    def check_form(self):
         if self.orgao.get() == "":
             tk.messagebox.showwarning("Atenção", "Falta o nome do órgão!")
         elif self.codLicitacao.get() == "":
@@ -120,8 +122,20 @@ class TopLevelFormulario:
         elif self.agrupamento.get() == 1 and int(self.qtd.get()) != len(self.lotesQtd):
             tk.messagebox.showwarning("Atenção", "A quantidade de lotes não bate com o número de campos, atualize a lista!")
         else:
+            return True
+        return False
+    
+    def button_criar_callback(self):
+        if self.check_form() and self.create_workbook():
             self.exitStatus = True
             self.top.destroy()
+    
+    def create_workbook(self):
+        self.filePath = filedialog.asksaveasfilename(defaultextension=".xlsx", filetypes=[("Planilha do Excel", "*.xlsx")])
+        if (self.filePath):
+            print("Selected file:", self.filePath)
+            return True
+        return False
 
     def tkVars2Integers(self):
         if self.agrupamento.get() == 0: return None
@@ -152,7 +166,8 @@ class TopLevelFormulario:
             "tipo": self.tipo.get(),
             "agrupamento": self.agrupamento.get(),
             "qtd": self.qtd.get(),
-            "lotesQtd": self.tkVars2Integers()
+            "lotesQtd": self.tkVars2Integers(),
+            "caminhoArquivo": self.filePath
         }
 
     def __init__(self, top=None):
@@ -187,6 +202,8 @@ class TopLevelFormulario:
         self.agrupamento = tk.IntVar()
         self.qtd = tk.StringVar()
         self.lotesQtd = []
+        
+        self.filePath = ""
         
         self.empresa.set("GI")
         self.tipo.set("PREGÃO")

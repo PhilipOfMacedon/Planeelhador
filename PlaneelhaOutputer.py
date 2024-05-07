@@ -44,5 +44,6 @@ class PlaneelhaOutputer:
         self.tipo = params["tipo"]
         self.qtd = params["qtd"]
         self.lotesQtd = params["lotesQtd"]
+        self.arquivo = params["caminhoArquivo"]
         
         print(f"DATA E HORÁRIO DE ABERTURA: {self.dia} de {self.mesExtenso}, {self.diaSemana}, {self.hora} horas.")

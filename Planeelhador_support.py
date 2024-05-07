@@ -21,12 +21,12 @@ def main(*args):
     root.protocol( 'WM_DELETE_WINDOW' , root.destroy)
     # Creates a toplevel widget.
     global _top1, _w1
-    _top1 = root
-    _w1 = TopLevelFormulario(_top1)
+    top1 = root
+    formulario = TopLevelFormulario(top1)
     root.mainloop()
-    if (_w1.exitStatus):
+    if (formulario.exitStatus):
         print("Success!")
-        print(_w1.getFormInfo())
+        print(formulario.getFormInfo())
     
 if __name__ == "__main__":
     main()
