@@ -40,6 +40,8 @@ def is_valid_datetime(date_string, date_format):
 class TopLevelFormulario:
 
     def removeAllLotes(self):
+        for frame in self.FramesLote:
+            frame.grid_forget()
         self.FramesLote = []
         self.LabelsLote = []
         self.EntriesLote = []
