@@ -1,58 +1,60 @@
 {
-	"GI": {
-		"NOME": "Mauro Nunes Pereira",
-		"ID": "M748026",
-		"ORG": "SSP-MG",
-		"CPF": "202.955.886-91",
-		"ECIVIL": "Casado",
-		"ENDERECO": {
-			"LOGRADOURO": "Rua Caetés 55",
-			"BAIRRO": "Iguaçu",
-			"CIDADE": "Ipatinga",
-			"ESTADO": "MG",
-			"CEP": "35.162-038"
-		}
-	},
-	"ID": {
-		"NOME": "Charles Silva Nunes",
-		"ID": "MG-10.023.063",
-		"ORG": "SSP-MG",
-		"CPF": "061.864.076-24",
-		"ECIVIL": "Casado",
-		"ENDERECO": {
-			"LOGRADOURO": "Rua Caetés 55 - Sala 101",
-			"BAIRRO": "Iguaçu",
-			"CIDADE": "Ipatinga",
-			"ESTADO": "MG",
-			"CEP": "35.162-038"
-		}
-	},
-	"EB": {
-		"NOME": "Camila Fabiana Silva Nunes",
-		"ID": "MG-16.856.702",
-		"ORG": "PC-MG",
-		"CPF": "102.214.226-76",
-		"ECIVIL": "Casado",
-		"ENDERECO": {
-			"LOGRADOURO": "Rua Caetés 55",
-			"BAIRRO": "Iguaçu",
-			"CIDADE": "Ipatinga",
-			"ESTADO": "MG",
-			"CEP": "35.162-038"
-		}
-	},
-	"GC": {
-		"NOME": "Charles Silva Nunes",
-		"ID": "MG-10.023.063",
-		"ORG": "SSP-MG",
-		"CPF": "061.864.076-24",
-		"ECIVIL": "Casado",
-		"ENDERECO": {
-			"LOGRADOURO": "Rua Caetés 55 - Sala 101",
-			"BAIRRO": "Iguaçu",
-			"CIDADE": "Ipatinga",
-			"ESTADO": "MG",
-			"CEP": "35.162-038"
+	"REPS": {
+		"GI": {
+			"NOME": "Mauro Nunes Pereira",
+			"ID": "M748026",
+			"ORG": "SSP-MG",
+			"CPF": "202.955.886-91",
+			"ECIVIL": "Casado",
+			"ENDERECO": {
+				"LOGRADOURO": "Rua Caetés, 55",
+				"BAIRRO": "Iguaçu",
+				"CIDADE": "Ipatinga",
+				"ESTADO": "MG",
+				"CEP": "35162-038"
+			}
+		},
+		"ID": {
+			"NOME": "Charles Silva Nunes",
+			"ID": "MG-10.023.063",
+			"ORG": "SSP-MG",
+			"CPF": "061.864.076-24",
+			"ECIVIL": "Casado",
+			"ENDERECO": {
+				"LOGRADOURO": "Rua Caetés, 55 - Sala 101",
+				"BAIRRO": "Iguaçu",
+				"CIDADE": "Ipatinga",
+				"ESTADO": "MG",
+				"CEP": "35162-038"
+			}
+		},
+		"EB": {
+			"NOME": "Camila Fabiana Silva Nunes",
+			"ID": "MG-16.856.702",
+			"ORG": "PC-MG",
+			"CPF": "102.214.226-76",
+			"ECIVIL": "Casado",
+			"ENDERECO": {
+				"LOGRADOURO": "Rua Caetés, 55",
+				"BAIRRO": "Iguaçu",
+				"CIDADE": "Ipatinga",
+				"ESTADO": "MG",
+				"CEP": "35162-038"
+			}
+		},
+		"GC": {
+			"NOME": "Charles Silva Nunes",
+			"ID": "MG-10.023.063",
+			"ORG": "SSP-MG",
+			"CPF": "061.864.076-24",
+			"ECIVIL": "Casado",
+			"ENDERECO": {
+				"LOGRADOURO": "Rua Caetés, 55 - Sala 101",
+				"BAIRRO": "Iguaçu",
+				"CIDADE": "Ipatinga",
+				"ESTADO": "MG",
+				"CEP": "35162-038"
+			}
 		}
 	}
 }

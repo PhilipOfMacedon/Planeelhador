@@ -18,6 +18,7 @@ import math
 from datetime import datetime
 
 from PlaneelhaOutputer import  PlaneelhaOutputer
+from PlaneelhaOutputer import load_data
 
 _location = os.path.dirname(__file__)
 
@@ -136,7 +137,8 @@ class TopLevelFormulario:
         self.filePath = filedialog.asksaveasfilename(defaultextension=".xlsx", filetypes=[("Planilha do Excel", "*.xlsx")])
         if (self.filePath):
             print("Selected file:", self.filePath)
-            return True
+            po = PlaneelhaOutputer(self.getFormInfo())
+            return False
         return False
 
     def tkVars2Integers(self):
@@ -257,23 +259,23 @@ class TopLevelFormulario:
         self.RadioID.configure(value='ID')
         self.RadioID.configure(variable=self.empresa)
 
-        self.RadioEC = tk.Radiobutton(self.Labelframe1)
-        self.RadioEC.place(relx=0.032, rely=0.829, relheight=0.044
+        self.RadioEB = tk.Radiobutton(self.Labelframe1)
+        self.RadioEB.place(relx=0.032, rely=0.829, relheight=0.044
                 , relwidth=0.191, bordermode='ignore')
-        self.RadioEC.configure(activebackground="#d9d9d9")
-        self.RadioEC.configure(activeforeground="black")
-        self.RadioEC.configure(anchor='w')
-        self.RadioEC.configure(background="#d9d9d9")
-        self.RadioEC.configure(compound='left')
-        self.RadioEC.configure(disabledforeground="#a3a3a3")
-        self.RadioEC.configure(font="-family {Segoe UI} -size 9")
-        self.RadioEC.configure(foreground="#000000")
-        self.RadioEC.configure(highlightbackground="#d9d9d9")
-        self.RadioEC.configure(highlightcolor="#000000")
-        self.RadioEC.configure(justify='left')
-        self.RadioEC.configure(text='''Embacom''')
-        self.RadioEC.configure(value='EC')
-        self.RadioEC.configure(variable=self.empresa)
+        self.RadioEB.configure(activebackground="#d9d9d9")
+        self.RadioEB.configure(activeforeground="black")
+        self.RadioEB.configure(anchor='w')
+        self.RadioEB.configure(background="#d9d9d9")
+        self.RadioEB.configure(compound='left')
+        self.RadioEB.configure(disabledforeground="#a3a3a3")
+        self.RadioEB.configure(font="-family {Segoe UI} -size 9")
+        self.RadioEB.configure(foreground="#000000")
+        self.RadioEB.configure(highlightbackground="#d9d9d9")
+        self.RadioEB.configure(highlightcolor="#000000")
+        self.RadioEB.configure(justify='left')
+        self.RadioEB.configure(text='''Embacom''')
+        self.RadioEB.configure(value='EB')
+        self.RadioEB.configure(variable=self.empresa)
 
         self.RadioGC = tk.Radiobutton(self.Labelframe1)
         self.RadioGC.place(relx=0.032, rely=0.865, relheight=0.044
@@ -672,3 +674,5 @@ class TopLevelFormulario:
         self.FramesLote = []
         self.LabelsLote = []
         self.EntriesLote = []
+
+        #load_data()

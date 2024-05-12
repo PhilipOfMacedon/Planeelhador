@@ -1,0 +1,87 @@
+{
+	"FORMATS": {
+		"default": {
+			"font_name": "Arial",
+			"font_size": 8,
+			"align": "center",
+			"valign": "vcenter"
+		},
+
+		"logo": {
+			"x_offset": 65,
+			"y_offset": 0,
+			"x_scale": 1,
+			"y_scale": 0.9,
+			"object_position": 1
+		},
+
+		"rowHeights": {
+			"timbra": 160,
+			"orgao": 40,
+			"tabela_pontas": 28,
+			"rep_x_sign": 40,
+			"sign": 80
+		},
+
+		"colWidths": {
+			"id": 40,
+			"desc": 365,
+			"muq": 68,
+			"valores": 96
+		},
+
+		"middle_left": {
+			"align": "left",
+			"valign": "vcenter"
+		},
+
+		"middle_center": {
+			"align": "center",
+			"valign": "vcenter"
+		},
+
+		"Arial8Regular": {
+			"Text": {
+				"font_name": "Arial",
+				"font_size": 8
+			},
+			"Decimal": {
+				"font_name": "Arial",
+				"font_size": 8,
+				"num_format": "0.00"
+			},
+			"Currency": {
+				"font_name": "Arial",
+				"font_size": 8,
+				"num_format": "Currency"
+			}
+		},
+
+		"Arial8Bold": {
+			"Text": {
+				"font_name": "Arial",
+				"font_size": 8,
+				"bold": true
+			},
+			"Decimal": {
+				"font_name": "Arial",
+				"font_size": 8,
+				"bold": true,
+				"num_format": "0.00"
+			},
+			"Currency": {
+				"font_name": "Arial",
+				"font_size": 8,
+				"bold": true,
+				"num_format": "Currency"
+			}
+		},
+
+		"BGColors": {
+			"GI": "#F7FFF8",
+			"ID": "#FFE9E9",
+			"EB": "#E0E8FF",
+			"GC": "#FFFFD7"
+		}
+	}
+}

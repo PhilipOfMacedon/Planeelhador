@@ -1,0 +1,107 @@
+{
+	"STATEMENTS": {
+		"GI": {
+			"RAZAO": "GRÁFICA IGUAÇU LTDA",
+			"CNPJ": "20.949.657/0001-07",
+			"ENDERECO": {
+				"LOGRADOURO": "Rua Caetés, 55",
+				"BAIRRO": "Iguaçu",
+				"CIDADE": "Ipatinga",
+				"ESTADO": "MG",
+				"CEP": "35162-038"
+			},
+			"PROPOSTA": "PROPOSTA COMERCIAL PARA FORNECIMENTO DE MATERIAIS GRÁFICOS",
+			"CONDICOES": "em até 30 dias da data da liberação da NF pelo setor competente.",
+			"VALIDADE": "$DIAS dias contados da data limite para entrega das propostas.",
+			"BANCOS": [
+				{
+					"NOME": "Banco do Brasil",
+					"AG": "3003-1",
+					"CC": "5679-0",
+					"PIX": "20.949.657/0001-07"
+				}
+			]
+		},
+
+		"ID": {
+			"RAZAO": "INFO DIRECT COMERCIAL LTDA",
+			"CNPJ": "12.959.463/0001-64",
+			"ENDERECO": {
+				"LOGRADOURO": "Rua Caetés, 55 - Sala 101",
+				"BAIRRO": "Iguaçu",
+				"CIDADE": "Ipatinga",
+				"ESTADO": "MG",
+				"CEP": "35162-038"
+			},
+			"PROPOSTA": "PROPOSTA COMERCIAL PARA FORNECIMENTO DE MATERIAIS DE INFORMÁTICA",
+			"CONDICOES": "em até 30 dias da data da liberação da NF pelo setor competente.",
+			"VALIDADE": "$DIAS dias contados da data limite para entrega das propostas.",
+			"BANCOS": [
+				{
+					"NOME": "Banco Inter",
+					"AG": "0001",
+					"CC": "45726264",
+					"PIX": "12.959.463/0001-64"
+				},
+				{
+					"NOME": "Banco do Brasil",
+					"AG": "3003-1",
+					"CC": "51774-7",
+					"PIX": ""
+				},
+				{
+					"NOME": "Banco Itaú",
+					"AG": "3109",
+					"CC": "99848-8",
+					"PIX": ""
+				}
+			]
+		},
+
+		"EB": {
+			"RAZAO": "EMBACOM LTDA",
+			"CNPJ": "47.156.456/0001-09",
+			"ENDERECO": {
+				"LOGRADOURO": "Rua Caetés, 55",
+				"BAIRRO": "Iguaçu",
+				"CIDADE": "Ipatinga",
+				"ESTADO": "MG",
+				"CEP": "35162-038"
+			},
+			"PROPOSTA": "PROPOSTA COMERCIAL PARA FORNECIMENTO DE MATERIAIS GRÁFICOS",
+			"CONDICOES": "em até 30 dias da data da liberação da NF pelo setor competente.",
+			"VALIDADE": "$DIAS dias contados da data limite para entrega das propostas.",
+			"BANCOS": [
+				{
+					"NOME": "Nubank",
+					"AG": "0001",
+					"CC": "40305653-7",
+					"PIX": "47.156.456/0001.09"
+				}
+			]
+		},
+
+		"GC": {
+			"RAZAO": "GOLD COMÉRCIO LTDA",
+			"CNPJ": "45.523.823/0001-30",
+			"ENDERECO": {
+				"LOGRADOURO": "Rua Jatoba, 198",
+				"BAIRRO": "Cidade Nova",
+				"CIDADE": "Governador Valadares",
+				"ESTADO": "MG",
+				"CEP": "35063-001"
+			},
+			"PROPOSTA": "PROPOSTA COMERCIAL PARA FORNECIMENTO DE MATERIAIS DE INFORMÁTICA",
+			"CONDICOES": "em até 30 dias da data da liberação da NF pelo setor competente.",
+			"VALIDADE": "$DIAS dias contados da data limite para entrega das propostas.",
+			"BANCOS": [
+				{
+					"NOME": "Nubank",
+					"AG": "0001",
+					"CC": "85341080-6",
+					"PIX": "45.523.823/0001-30"
+				}
+			]
+		}
+	}
+}
