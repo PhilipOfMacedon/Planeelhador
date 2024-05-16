@@ -8,10 +8,21 @@
 		},
 
 		"BGColors": {
-			"GI": "#F7FFF8",
-			"ID": "#FFE9E9",
-			"EB": "#E0E8FF",
-			"GC": "#FFFFD7"
+			"GI": {
+				"fg_color": "#F7FFF8"
+			},
+
+			"ID": {
+				"fg_color": "#FFE9E9"
+			},
+
+			"EB": {
+				"fg_color": "#E0E8FF"
+			},
+
+			"GC": {
+				"fg_color": "#FFFFD7"
+			}
 		},
 
 		"logo": {
@@ -38,6 +49,14 @@
 			"valores": 96
 		},
 
+		"border_thin": {
+			"border": 1
+		},
+
+		"border_thick": {
+			"border": 2
+		},
+
 		"top_left": {
 			"align": "left",
 			"valign": "top"
@@ -50,6 +69,11 @@
 
 		"middle_center": {
 			"align": "center",
+			"valign": "vcenter"
+		},
+
+		"middle_just": {
+			"align": "justify",
 			"valign": "vcenter"
 		},
 
@@ -66,11 +90,16 @@
 			"underline": true
 		},
 
-		"Decimal": {
-			"num_format": "0.00"
+		"bold_underline_text": {
+			"bold": true,
+			"underline": true
 		},
 
-		"Currency": {
+		"decimal": {
+			"num_format": "#,##0.####"
+		},
+
+		"currency": {
 			"num_format": "_(\"R$ \"* #,##0.00_);_(\"R$ \"* \\(#,##0.00\\);_(\"R$ \"* -??_);_(@_)"
 		}
 	}

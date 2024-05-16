@@ -10,7 +10,7 @@
 				"ESTADO": "MG",
 				"CEP": "35162-038"
 			},
-			"PROPOSTA": "PROPOSTA COMERCIAL PARA FORNECIMENTO DE MATERIAIS GRÁFICOS",
+			"PROPOSTA": "MATERIAIS GRÁFICOS",
 			"CONDICOES": "em até 30 dias da data da liberação da NF pelo setor competente.",
 			"VALIDADE": "$DIAS dias contados da data limite para entrega das propostas.",
 			"BANCOS": [
@@ -33,7 +33,7 @@
 				"ESTADO": "MG",
 				"CEP": "35162-038"
 			},
-			"PROPOSTA": "PROPOSTA COMERCIAL PARA FORNECIMENTO DE MATERIAIS DE INFORMÁTICA",
+			"PROPOSTA": "MATERIAIS DE INFORMÁTICA",
 			"CONDICOES": "em até 30 dias da data da liberação da NF pelo setor competente.",
 			"VALIDADE": "$DIAS dias contados da data limite para entrega das propostas.",
 			"BANCOS": [
@@ -68,7 +68,7 @@
 				"ESTADO": "MG",
 				"CEP": "35162-038"
 			},
-			"PROPOSTA": "PROPOSTA COMERCIAL PARA FORNECIMENTO DE MATERIAIS GRÁFICOS",
+			"PROPOSTA": "MATERIAIS GRÁFICOS",
 			"CONDICOES": "em até 30 dias da data da liberação da NF pelo setor competente.",
 			"VALIDADE": "$DIAS dias contados da data limite para entrega das propostas.",
 			"BANCOS": [
@@ -91,7 +91,7 @@
 				"ESTADO": "MG",
 				"CEP": "35063-001"
 			},
-			"PROPOSTA": "PROPOSTA COMERCIAL PARA FORNECIMENTO DE MATERIAIS DE INFORMÁTICA",
+			"PROPOSTA": "MATERIAIS DE INFORMÁTICA",
 			"CONDICOES": "em até 30 dias da data da liberação da NF pelo setor competente.",
 			"VALIDADE": "$DIAS dias contados da data limite para entrega das propostas.",
 			"BANCOS": [
