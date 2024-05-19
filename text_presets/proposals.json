@@ -1,5 +1,5 @@
 {
-	"STATEMENTS": {
+	"PROPOSALS": {
 		"GI": {
 			"RAZAO": "GRÁFICA IGUAÇU LTDA",
 			"CNPJ": "20.949.657/0001-07",
@@ -12,7 +12,7 @@
 			},
 			"PROPOSTA": "MATERIAIS GRÁFICOS",
 			"CONDICOES": "em até 30 dias da data da liberação da NF pelo setor competente.",
-			"VALIDADE": "$DIAS dias contados da data limite para entrega das propostas.",
+			"VALIDADE": "90 dias contados da data limite para entrega das propostas.",
 			"BANCOS": [
 				{
 					"NOME": "Banco do Brasil",
@@ -35,7 +35,7 @@
 			},
 			"PROPOSTA": "MATERIAIS DE INFORMÁTICA",
 			"CONDICOES": "em até 30 dias da data da liberação da NF pelo setor competente.",
-			"VALIDADE": "$DIAS dias contados da data limite para entrega das propostas.",
+			"VALIDADE": "90 dias contados da data limite para entrega das propostas.",
 			"BANCOS": [
 				{
 					"NOME": "Banco Inter",
@@ -70,7 +70,7 @@
 			},
 			"PROPOSTA": "MATERIAIS GRÁFICOS",
 			"CONDICOES": "em até 30 dias da data da liberação da NF pelo setor competente.",
-			"VALIDADE": "$DIAS dias contados da data limite para entrega das propostas.",
+			"VALIDADE": "90 dias contados da data limite para entrega das propostas.",
 			"BANCOS": [
 				{
 					"NOME": "Nubank",
@@ -93,7 +93,7 @@
 			},
 			"PROPOSTA": "MATERIAIS DE INFORMÁTICA",
 			"CONDICOES": "em até 30 dias da data da liberação da NF pelo setor competente.",
-			"VALIDADE": "$DIAS dias contados da data limite para entrega das propostas.",
+			"VALIDADE": "90 dias contados da data limite para entrega das propostas.",
 			"BANCOS": [
 				{
 					"NOME": "Nubank",

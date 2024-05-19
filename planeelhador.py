@@ -169,7 +169,7 @@ class TopLevelFormulario:
             "empresa": self.empresa.get(),
             "tipo": self.tipo.get(),
             "agrupamento": self.agrupamento.get(),
-            "qtd": self.qtd.get(),
+            "qtd": int(self.qtd.get()),
             "lotesQtd": self.tkVars2Integers(),
             "caminhoArquivo": self.filePath
         }
