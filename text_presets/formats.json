@@ -55,15 +55,16 @@
 			"COMMON": {
 				"header": {
 					"fg_color": "#232323",
-					"font_color": "#ffffff"
+					"font_color": "#ffffff",
+					"border_color": "#eeeeee"
 				},
 				"body": {
 					"fg_color": "#eeeeee",
 					"font_color": "#000000"
 				},
 				"disabled": {
-					"fg_color": "#808080",
-					"font_color": "#000000"
+					"fg_color": "#999999",
+					"font_color": "#666666"
 				}
 			}
 		},

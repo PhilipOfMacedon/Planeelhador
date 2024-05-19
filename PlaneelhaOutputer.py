@@ -12,6 +12,9 @@ def init_format_variables(wb, formats, empresa):
     global table_IMUQ_text
     global table_MONEYA8R_text
     global table_MONEYA8B_text
+    global table_HIDDEN_header
+    global table_HIDDEN_body
+    global table_HIDDEN_disabled
     global A8RML_text
     global A8RBC_text
     global A8RMC_text
@@ -20,6 +23,7 @@ def init_format_variables(wb, formats, empresa):
     global A8BMC_text
     global A8BUMC_text
     global A8RMC_number
+    global A8BBC_text
     global multiplier_text
     
     A8RML_text = wb.add_format(formats["Arial8Regular"] | formats["middle_left"])
@@ -53,6 +57,20 @@ def init_format_variables(wb, formats, empresa):
         formats["currency"] | \
         formats["border_thin"] | \
         formats["BGColors"][empresa]["body"])
+    table_HIDDEN_header = wb.add_format(formats["Arial8Regular"] | \
+        formats["middle_center"] | \
+        formats["bold_text"] | \
+        formats["border_thin"] | \
+        formats["BGColors"]["COMMON"]["header"])
+    table_HIDDEN_disabled = wb.add_format(formats["Arial8Regular"] | \
+        formats["middle_center"] | \
+        formats["border_thin"] | \
+        formats["BGColors"]["COMMON"]["disabled"])
+    table_HIDDEN_body = wb.add_format(formats["Arial8Regular"] | \
+        formats["middle_center"] | \
+        formats["border_thin"] | \
+        formats["decimal_2"] | \
+        formats["BGColors"]["COMMON"]["body"])
     A8RML_text = wb.add_format(formats["Arial8Regular"] | formats["middle_left"])
     A8RBC_text = wb.add_format(formats["Arial8Regular"] | formats["bottom_center"])
     A8RMC_text = wb.add_format(formats["Arial8Regular"] | formats["middle_center"])
@@ -60,7 +78,8 @@ def init_format_variables(wb, formats, empresa):
     A8BML_text = wb.add_format(formats["Arial8Regular"] | formats["bold_text"] | formats["middle_left"])
     A8BMC_text = wb.add_format(formats["Arial8Regular"] | formats["bold_text"] | formats["middle_center"])
     A8BUMC_text = wb.add_format(formats["Arial8Regular"] | formats["bold_underline_text"] | formats["middle_center"])
-    A8RMC_number = wb.add_format(formats["Arial8Regular"] | formats["middle_center"] | formats["decimal2"])
+    A8RMC_number = wb.add_format(formats["Arial8Regular"] | formats["middle_center"] | formats["decimal_2"])
+    A8BBC_text = wb.add_format(formats["Arial8Regular"] | formats["bold_text"] | formats["bottom_center"])
     multiplier_text = wb.add_format(formats["multiplier"])
 
 def load_data():
@@ -171,8 +190,8 @@ class PlaneelhaOutputer:
         ws.write("E{}".format(start_line), "QUANT.", table_HEAD_text)
         ws.write("F{}".format(start_line), "V.UNIT.", table_HEAD_text)
         ws.write("G{}".format(start_line), "V.TOTAL.", table_HEAD_text)
-        ws.write("H{}".format(start_line), "EST.", A8BMC_text)
-        ws.write("I{}".format(start_line), "MIN.", A8BMC_text)
+        ws.write("H{}".format(start_line), "EST.", table_HIDDEN_header)
+        ws.write("I{}".format(start_line), "MIN.", table_HIDDEN_header)
         
         for i in range(item_count):
             line = start_line + i + 1
@@ -185,8 +204,8 @@ class PlaneelhaOutputer:
                 "=ROUND(H{}*$I$1,2)".format(line), table_MONEYA8R_text)
             ws.write_formula("G{}".format(line), \
                 "=E{}*H{}".format(line, line), table_MONEYA8R_text)
-            ws.write("H{}".format(line), "", A8RMC_number)
-            ws.write("I{}".format(line), "", A8RMC_number)
+            ws.write("H{}".format(line), "", table_HIDDEN_body)
+            ws.write("I{}".format(line), "", table_HIDDEN_body)
         tipo_total = "GERAL" if title == "DESCRIÇÃO DO PRODUTO" else title
         line = start_line + item_count + 1
         first = start_line + 1
@@ -194,10 +213,14 @@ class PlaneelhaOutputer:
         ws.merge_range("A{}:F{}".format(line, line), "TOTAL {}".format(tipo_total), table_TITLE_text)
         ws.write_formula("G{}".format(line), \
                 "=SUM(G{}:G{})".format(first, last), table_MONEYA8B_text)
+        ws.write("H{}".format(line), "", table_HIDDEN_disabled)
+        ws.write("I{}".format(line), "", table_HIDDEN_disabled)
 
     def write_tables(self, ws, data):
         ws.set_row_pixels(8, data["FORMATS"]["rowHeights"]["tabela_pontas"])
         ws.merge_range("A9:G9", "RELAÇÃO DE ITENS", table_TITLE_text)
+        ws.write("H9", "", table_HIDDEN_disabled)
+        ws.write("I9", "", table_HIDDEN_disabled)
         if self.agrupamento == 0:
             self.write_item_table(ws, data, "DESCRIÇÃO DO PRODUTO", 10, self.qtd)
             return self.qtd + 11
@@ -220,6 +243,8 @@ class PlaneelhaOutputer:
                 ws.set_row_pixels(line -1, data["FORMATS"]["rowHeights"]["tabela_pontas"])
                 ws.merge_range("A{}:F{}".format(line, line), "TOTAL GLOBAL", table_HEAD_text)
                 ws.write_formula("G{}".format(line), "=SUM({})".format(net_worth), table_MONEYA8B_text)
+                ws.write("H{}".format(line), "", table_HIDDEN_disabled)
+                ws.write("I{}".format(line), "", table_HIDDEN_disabled)
             return line
 
     def write_details(self, ws, data, start_line):
@@ -228,7 +253,7 @@ class PlaneelhaOutputer:
         rep = data["REPS"][self.empresa]
         sign = data["SIGNATARIES"]["CRISTIAN"]
         conditions = "- Condições de pagamento: {}".format(proposal["CONDICOES"])
-        expires = " - Validade da proposta: {}".format(proposal["VALIDADE"])
+        expires = "- Validade da proposta: {}".format(proposal["VALIDADE"])
         banks = []
         for bank_info in proposal["BANCOS"]:
             bank = "- Dados bancários - {}: Agência: {} / Conta: {}{}".format(\
@@ -269,11 +294,11 @@ class PlaneelhaOutputer:
         ws.set_row_pixels(rep_line + 4, data["FORMATS"]["rowHeights"]["rep_x_sign"])
         sign_line = rep_line + 6
         
-        ws.merge_range("A{}:G{}".format(sign_line, sign_line), sign_place_time, A8RBC_text)
+        ws.merge_range("A{}:G{}".format(sign_line, sign_line), sign_place_time, A8BBC_text)
         ws.set_row_pixels(sign_line, data["FORMATS"]["rowHeights"]["sign"])
-        ws.merge_range("A{}:G{}".format(sign_line + 1, sign_line + 1), sign_underline, A8RBC_text)
-        ws.merge_range("A{}:G{}".format(sign_line + 2, sign_line + 2), sign_name, A8RBC_text)
-        ws.merge_range("A{}:G{}".format(sign_line + 3, sign_line + 3), sign_id, A8RBC_text)
+        ws.merge_range("A{}:G{}".format(sign_line + 1, sign_line + 1), sign_underline, A8BBC_text)
+        ws.merge_range("A{}:G{}".format(sign_line + 2, sign_line + 2), sign_name, A8BBC_text)
+        ws.merge_range("A{}:G{}".format(sign_line + 3, sign_line + 3), sign_id, A8BBC_text)
         
         return sign_line + 3
 
@@ -296,6 +321,7 @@ class PlaneelhaOutputer:
         ws.set_paper(9)
         ws.set_margins(0.4, 0.4, 0.4, 0.4)
         ws.print_area("A1:G{}".format(last_document_line))
+        ws.repeat_rows(0)
         
         wb.close()
         
