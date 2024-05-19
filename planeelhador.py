@@ -134,11 +134,18 @@ class TopLevelFormulario:
             self.top.destroy()
     
     def create_workbook(self):
-        self.filePath = filedialog.asksaveasfilename(defaultextension=".xlsx", filetypes=[("Planilha do Excel", "*.xlsx")])
-        if (self.filePath):
-            print("Selected file:", self.filePath)
-            po = PlaneelhaOutputer(self.getFormInfo())
-            return False
+        if self.fileDir == "":
+            self.filePath = filedialog.asksaveasfilename(defaultextension=".xlsx", filetypes=[("Planilha do Excel", "*.xlsx")])
+            if (self.filePath):
+                print("Selected file:", self.filePath)
+                po = PlaneelhaOutputer(self.getFormInfo())
+                return True
+        else:
+            self.filePath = filedialog.asksaveasfilename(initialdir=self.fileDir, defaultextension=".xlsx", filetypes=[("Planilha do Excel", "*.xlsx")])
+            if (self.filePath):
+                print("Selected file:", self.filePath)
+                po = PlaneelhaOutputer(self.getFormInfo())
+                return True
         return False
 
     def tkVars2Integers(self):
@@ -174,7 +181,7 @@ class TopLevelFormulario:
             "caminhoArquivo": self.filePath
         }
 
-    def __init__(self, top=None):
+    def __init__(self, top=None, savedir = ""):
         '''This class configures and populates the toplevel window.
            top is the toplevel containing window.'''
 
@@ -208,6 +215,7 @@ class TopLevelFormulario:
         self.lotesQtd = []
         
         self.filePath = ""
+        self.fileDir = savedir
         
         self.empresa.set("GI")
         self.tipo.set("PREGÃO")
