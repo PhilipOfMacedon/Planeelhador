@@ -2,6 +2,7 @@
 	"PROPOSALS": {
 		"GI": {
 			"RAZAO": "GRÁFICA IGUAÇU LTDA",
+			"MARCA": "Marca Própria",
 			"CNPJ": "20.949.657/0001-07",
 			"ENDERECO": {
 				"LOGRADOURO": "Rua Caetés, 55",
@@ -25,6 +26,7 @@
 
 		"ID": {
 			"RAZAO": "INFO DIRECT COMERCIAL LTDA",
+			"MARCA": "ID",
 			"CNPJ": "12.959.463/0001-64",
 			"ENDERECO": {
 				"LOGRADOURO": "Rua Caetés, 55 - Sala 101",
@@ -60,6 +62,7 @@
 
 		"EB": {
 			"RAZAO": "EMBACOM LTDA",
+			"MARCA": "Marca Própria",
 			"CNPJ": "47.156.456/0001-09",
 			"ENDERECO": {
 				"LOGRADOURO": "Rua Caetés, 55",
@@ -83,6 +86,7 @@
 
 		"GC": {
 			"RAZAO": "GOLD COMÉRCIO LTDA",
+			"MARCA": "GC",
 			"CNPJ": "45.523.823/0001-30",
 			"ENDERECO": {
 				"LOGRADOURO": "Rua Jatoba, 198",

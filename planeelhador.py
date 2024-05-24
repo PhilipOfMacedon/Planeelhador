@@ -134,14 +134,15 @@ class TopLevelFormulario:
             self.top.destroy()
     
     def create_workbook(self):
+        template_name = "MODELO DE PLANILHA {} - ".format(self.empresa.get())
         if self.fileDir == "":
-            self.filePath = filedialog.asksaveasfilename(defaultextension=".xlsx", filetypes=[("Planilha do Excel", "*.xlsx")])
+            self.filePath = filedialog.asksaveasfilename(defaultextension=".xlsx", initialfile=template_name, filetypes=[("Planilha do Excel", "*.xlsx")])
             if (self.filePath):
                 print("Selected file:", self.filePath)
                 po = PlaneelhaOutputer(self.getFormInfo())
                 return True
         else:
-            self.filePath = filedialog.asksaveasfilename(initialdir=self.fileDir, defaultextension=".xlsx", filetypes=[("Planilha do Excel", "*.xlsx")])
+            self.filePath = filedialog.asksaveasfilename(initialdir=self.fileDir, initialfile=template_name, defaultextension=".xlsx", filetypes=[("Planilha do Excel", "*.xlsx")])
             if (self.filePath):
                 print("Selected file:", self.filePath)
                 po = PlaneelhaOutputer(self.getFormInfo())
@@ -214,6 +215,8 @@ class TopLevelFormulario:
         self.qtd = tk.StringVar()
         self.lotesQtd = []
         
+        self.orgao.set("Prefeitura Municipal de ")
+
         self.filePath = ""
         self.fileDir = savedir
         

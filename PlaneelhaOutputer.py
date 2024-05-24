@@ -1,6 +1,5 @@
 import xlsxwriter as xlsx
 import json
-import pprint
 from datetime import datetime
 import locale
 
@@ -116,7 +115,7 @@ def load_data():
     return data
 class PlaneelhaOutputer:
     def get_datetime_from_string(self, date_string, time_string):
-        locale.setlocale(locale.LC_TIME, "pt_BR.UTF-8")
+        locale.setlocale(locale.LC_ALL, "pt_BR.UTF-8")
         date_formats = ["%d/%m/%Y", "%d/%m/%y", "%d/%m"]
         
         date_object = None
@@ -131,8 +130,8 @@ class PlaneelhaOutputer:
                 self.dia = str(date_object.day)
                 self.mes = str(date_object.month)
                 self.ano = str(date_object.year)
-                self.diaSemana = date_object.strftime("%A")
-                self.mesExtenso = date_object.strftime("%B")
+                self.diaSemana = date_object.strftime("%A").encode('utf-8').decode('utf-8')
+                self.mesExtenso = date_object.strftime("%B").encode('utf-8').decode('utf-8')
                 self.hora = date_object.strftime("%H:%M")
                 if int(self.dia) < 10: self.dia = "0" + self.dia
                 return
@@ -147,9 +146,10 @@ class PlaneelhaOutputer:
         wb.formats[0].font_size = data["FORMATS"]["default"]["font_size"]
         wb.formats[0].set_align(data["FORMATS"]["default"]["align"])
         wb.formats[0].set_align(data["FORMATS"]["default"]["valign"])
+        wb.formats[0].set_text_wrap()
         
         # Adjust the main column widths and the logo line height
-        ws.set_default_row(data["FORMATS"]["rowHeights"]["default"])
+        # ws.set_default_row(data["FORMATS"]["rowHeights"]["default"])
         ws.set_row_pixels(0, data["FORMATS"]["rowHeights"]["timbra"])
         ws.set_column_pixels(0, 0, data["FORMATS"]["colWidths"]["id"])
         ws.set_column_pixels(1, 1, data["FORMATS"]["colWidths"]["desc"])
@@ -180,6 +180,8 @@ class PlaneelhaOutputer:
         ws.write_number("I1", 1.0, multiplier_text)
  
     def write_item_table(self, ws, data, title, start_line, item_count):
+        marca = data["PROPOSALS"][self.empresa]["MARCA"]
+        
         ws.set_row_pixels(start_line - 1, data["FORMATS"]["rowHeights"]["tabela_pontas"])
         ws.set_row_pixels(start_line + item_count, data["FORMATS"]["rowHeights"]["tabela_pontas"])
         
@@ -197,13 +199,13 @@ class PlaneelhaOutputer:
             line = start_line + i + 1
             ws.write("A{}".format(line), str(i + 1), table_IMUQ_text)
             ws.write("B{}".format(line), "", table_DESC_text)
-            ws.write("C{}".format(line), "", table_IMUQ_text)
-            ws.write("D{}".format(line), "", table_IMUQ_text)
+            ws.write("C{}".format(line), marca, table_IMUQ_text)
+            ws.write("D{}".format(line), "UN", table_IMUQ_text)
             ws.write("E{}".format(line), "", table_IMUQ_text)
             ws.write_formula("F{}".format(line), \
                 "=ROUND(H{}*$I$1,2)".format(line), table_MONEYA8R_text)
             ws.write_formula("G{}".format(line), \
-                "=E{}*H{}".format(line, line), table_MONEYA8R_text)
+                "=E{}*F{}".format(line, line), table_MONEYA8R_text)
             ws.write("H{}".format(line), "", table_HIDDEN_body)
             ws.write("I{}".format(line), "", table_HIDDEN_body)
         tipo_total = "GERAL" if title == "DESCRIÇÃO DO PRODUTO" else title
@@ -347,4 +349,4 @@ class PlaneelhaOutputer:
         self.generate_file()
         
         print("SUCCESS!")
-        #print(f"DATA E HORÁRIO DE ABERTURA: {self.dia} de {self.mesExtenso}, {self.diaSemana}, {self.hora} horas.")
+        print(f"DATA E HORÁRIO DE ABERTURA: {self.dia} de {self.mesExtenso}, {self.diaSemana}, {self.hora} horas.")

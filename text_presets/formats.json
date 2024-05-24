@@ -81,7 +81,7 @@
 			"timbra": 160,
 			"orgao": 40,
 			"tabela_pontas": 28,
-			"rep_x_sign": 40,
+			"rep_x_sign": 45,
 			"sign": 80,
 			"default": 14
 		},
@@ -129,7 +129,8 @@
 
 		"Arial8Regular": {
 			"font_name": "Arial",
-			"font_size": 8
+			"font_size": 8,
+			"text_wrap": true
 		},
 
 		"bold_text": {
@@ -146,7 +147,7 @@
 		},
 
 		"decimal": {
-			"num_format": "#,##0.####"
+			"num_format": "#,##0"
 		},
 
 		"decimal_2": {
