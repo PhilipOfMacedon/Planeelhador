@@ -40,6 +40,12 @@
 			"VALIDADE": "90 dias contados da data limite para entrega das propostas.",
 			"BANCOS": [
 				{
+					"NOME": "Banco Sicredi",
+					"AG": "0119",
+					"CC": "77343-1",
+					"PIX": "contato@infodirect.com.br"
+				},
+				{
 					"NOME": "Banco Inter",
 					"AG": "0001",
 					"CC": "45726264",
@@ -49,12 +55,6 @@
 					"NOME": "Banco do Brasil",
 					"AG": "3003-1",
 					"CC": "51774-7",
-					"PIX": ""
-				},
-				{
-					"NOME": "Banco Itaú",
-					"AG": "3109",
-					"CC": "99848-8",
 					"PIX": ""
 				}
 			]
