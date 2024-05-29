@@ -65,6 +65,11 @@
 				"disabled": {
 					"fg_color": "#999999",
 					"font_color": "#666666"
+				},
+				"header_2": {
+					"fg_color": "#232323",
+					"font_color": "#ffffff",
+					"border_color": "#000000"
 				}
 			}
 		},

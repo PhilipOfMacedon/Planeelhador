@@ -12,6 +12,7 @@ def init_format_variables(wb, formats, empresa):
     global table_MONEYA8R_text
     global table_MONEYA8B_text
     global table_HIDDEN_header
+    global table_HIDDEN_header2
     global table_HIDDEN_body
     global table_HIDDEN_disabled
     global A8RML_text
@@ -61,6 +62,11 @@ def init_format_variables(wb, formats, empresa):
         formats["bold_text"] | \
         formats["border_thin"] | \
         formats["BGColors"]["COMMON"]["header"])
+    table_HIDDEN_header2 = wb.add_format(formats["Arial8Regular"] | \
+        formats["middle_center"] | \
+        formats["bold_text"] | \
+        formats["border_thick"] | \
+        formats["BGColors"]["COMMON"]["header_2"])
     table_HIDDEN_disabled = wb.add_format(formats["Arial8Regular"] | \
         formats["middle_center"] | \
         formats["border_thin"] | \
@@ -154,8 +160,20 @@ class PlaneelhaOutputer:
         ws.set_column_pixels(0, 0, data["FORMATS"]["colWidths"]["id"])
         ws.set_column_pixels(1, 1, data["FORMATS"]["colWidths"]["desc"])
         ws.set_column_pixels(2, 4, data["FORMATS"]["colWidths"]["muq"])
-        ws.set_column_pixels(5, 9, data["FORMATS"]["colWidths"]["valores"])
+        ws.set_column_pixels(5, 12, data["FORMATS"]["colWidths"]["valores"])
     
+    def set_database_sheet(self, wb, data):
+        bd = wb.add_worksheet("BD")
+        bd.set_column_pixels(0, 1, data["FORMATS"]["colWidths"]["valores"])
+        bd.write_string("A1", "CHAVE", A8BMC_text)
+        bd.write_string("A2", "ESTIMADO", A8RMC_text)
+        bd.write_string("A3", "MÍNIMO", A8RMC_text)
+        bd.write_string("A4", "REAJUSTADO", A8RMC_text)
+        bd.write_string("B1", "VALOR", A8BMC_text)
+        bd.write_string("B2", "H", A8RMC_text)
+        bd.write_string("B3", "I", A8RMC_text)
+        bd.write_string("B4", "K", A8RMC_text)
+
     def write_document_header(self, ws, data):
         formats = data["FORMATS"]
         header = data["HEADER"]
@@ -177,7 +195,12 @@ class PlaneelhaOutputer:
         ws.merge_range("A6:G6", bid + process + lictype, A8BMC_text)
         ws.merge_range("A7:G7", opening, A8BMC_text)
         
+        ws.write("H1", "MULT. MÍNIMO:", A8BMC_text)
         ws.write_number("I1", 1.0, multiplier_text)
+
+        ws.write("H2", "VISUALIZAR:", A8BMC_text)
+        ws.data_validation("I2", {"validate": "list", "source": "=BD!$A$2:$A$4"})
+        ws.write("I2", "ESTIMADO", table_HIDDEN_header2)
  
     def write_item_table(self, ws, data, title, start_line, item_count):
         marca = data["PROPOSALS"][self.empresa]["MARCA"]
@@ -192,8 +215,10 @@ class PlaneelhaOutputer:
         ws.write("E{}".format(start_line), "QUANT.", table_HEAD_text)
         ws.write("F{}".format(start_line), "V.UNIT.", table_HEAD_text)
         ws.write("G{}".format(start_line), "V.TOTAL.", table_HEAD_text)
-        ws.write("H{}".format(start_line), "EST.", table_HIDDEN_header)
-        ws.write("I{}".format(start_line), "MIN.", table_HIDDEN_header)
+        ws.write("H{}".format(start_line), "ESTIMADO", table_HIDDEN_header)
+        ws.write("I{}".format(start_line), "MÍNIMO", table_HIDDEN_header)
+        ws.write("J{}".format(start_line), "CUSTO", table_HIDDEN_header)
+        ws.write("K{}".format(start_line), "REAJUSTADO", table_HIDDEN_header)
         
         for i in range(item_count):
             line = start_line + i + 1
@@ -203,11 +228,15 @@ class PlaneelhaOutputer:
             ws.write("D{}".format(line), "UN", table_IMUQ_text)
             ws.write("E{}".format(line), "", table_IMUQ_text)
             ws.write_formula("F{}".format(line), \
-                "=ROUND(H{}*$I$1,2)".format(line), table_MONEYA8R_text)
+                "=TRUNC(INDIRECT(CONCATENATE(VLOOKUP($I$2,BD!$A$2:$B$4,2,FALSE),ROW())),2)", table_MONEYA8R_text)
             ws.write_formula("G{}".format(line), \
                 "=E{}*F{}".format(line, line), table_MONEYA8R_text)
             ws.write("H{}".format(line), "", table_HIDDEN_body)
-            ws.write("I{}".format(line), "", table_HIDDEN_body)
+            ws.write_formula("I{}".format(line), \
+                "=$I$1*J{}".format(line), table_HIDDEN_body)
+            ws.write("J{}".format(line), "", table_HIDDEN_body)
+            ws.write("K{}".format(line), "", table_HIDDEN_body)
+
         tipo_total = "GERAL" if title == "DESCRIÇÃO DO PRODUTO" else title
         line = start_line + item_count + 1
         first = start_line + 1
@@ -217,17 +246,20 @@ class PlaneelhaOutputer:
                 "=SUM(G{}:G{})".format(first, last), table_MONEYA8B_text)
         ws.write("H{}".format(line), "", table_HIDDEN_disabled)
         ws.write("I{}".format(line), "", table_HIDDEN_disabled)
+        ws.write("J{}".format(line), "", table_HIDDEN_disabled)
+        ws.write("K{}".format(line), "", table_HIDDEN_disabled)
 
     def write_tables(self, ws, data):
         ws.set_row_pixels(8, data["FORMATS"]["rowHeights"]["tabela_pontas"])
         ws.merge_range("A9:G9", "RELAÇÃO DE ITENS", table_TITLE_text)
         ws.write("H9", "", table_HIDDEN_disabled)
         ws.write("I9", "", table_HIDDEN_disabled)
+        ws.write("J9", "", table_HIDDEN_disabled)
+        ws.write("K9", "", table_HIDDEN_disabled)
         if self.agrupamento == 0:
             self.write_item_table(ws, data, "DESCRIÇÃO DO PRODUTO", 10, self.qtd)
             return self.qtd + 11
         else:
-            net_worth = ""
             nome = "LOTE {}"
             item_sum = 0
             skipped = 0
@@ -238,15 +270,15 @@ class PlaneelhaOutputer:
                 start_line = 10 + item_sum + 2 * (lote - skipped)
                 self.write_item_table(ws, data, nome.format(lote + 1), start_line, self.lotesQtd[lote])
                 item_sum += self.lotesQtd[lote]
-                batch_end_line = 10 + item_sum + 2 * (lote + 1 - skipped) - 1
-                net_worth += "{}G{}".format("" if net_worth == "" else ", ", batch_end_line)
             line = 10 + item_sum + 2 * (self.qtd - skipped)
             if self.qtd - skipped > 1:
                 ws.set_row_pixels(line -1, data["FORMATS"]["rowHeights"]["tabela_pontas"])
-                ws.merge_range("A{}:F{}".format(line, line), "TOTAL GLOBAL", table_HEAD_text)
-                ws.write_formula("G{}".format(line), "=SUM({})".format(net_worth), table_MONEYA8B_text)
+                ws.merge_range("A{0}:F{0}".format(line), "TOTAL GLOBAL", table_HEAD_text)
+                ws.write_formula("G{}".format(line), "=SUMPRODUCT(--(ISNUMBER(SEARCH(\"TOTAL\",A11:A{0}))),G11:G{0})".format(line-1), table_MONEYA8B_text)
                 ws.write("H{}".format(line), "", table_HIDDEN_disabled)
                 ws.write("I{}".format(line), "", table_HIDDEN_disabled)
+                ws.write("J{}".format(line), "", table_HIDDEN_disabled)
+                ws.write("K{}".format(line), "", table_HIDDEN_disabled)
             return line
 
     def write_details(self, ws, data, start_line):
@@ -310,10 +342,14 @@ class PlaneelhaOutputer:
         opt = {
             "strings_to_numbers": True
         }
-        
+
         wb = xlsx.Workbook(filename=self.arquivo, options=opt)
-        ws = wb.add_worksheet("PROPOSTA")
         init_format_variables(wb, data["FORMATS"], self.empresa)
+        
+        self.set_database_sheet(wb, data)
+
+        ws = wb.add_worksheet("PROPOSTA")
+        ws.activate()
         
         self.set_default_document_format(wb, ws, data)
         self.write_document_header(ws, data)
