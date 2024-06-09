@@ -10,22 +10,22 @@
 		"BGColors": {
 			"GI": {
 				"body": {
-					"fg_color": "#F7FFF8",
+					"fg_color": "#FFDEED",
 					"font_color": "#000000"
 				},
 				"title": {
-					"fg_color": "#49524a",
+					"fg_color": "#980045",
 					"font_color": "#ffffff"
 				}
 			},
 
 			"ID": {
 				"body": {
-					"fg_color": "#FFE9E9",
+					"fg_color": "#CAFFC6",
 					"font_color": "#000000"
 				},
 				"title": {
-					"fg_color": "#982929",
+					"fg_color": "#224b12",
 					"font_color": "#ffffff"
 				}
 			},

@@ -1,7 +1,7 @@
 Windows Registry Editor Version 5.00
 
 [HKEY_CLASSES_ROOT\Directory\Background\shell\CreateWorkbook]
-@="Criar nova planilha aqui..."
+@="Create new workbook here..."
 
 [HKEY_CLASSES_ROOT\Directory\Background\shell\CreateWorkbook\command]
-@="\"%localAppData%\\Planeelhador\\planeelhador.bat\" \"%V\""
+@="\"C:\\Planeelhador\\planeelhador.bat\" \"%V\""

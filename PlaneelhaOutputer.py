@@ -349,7 +349,6 @@ class PlaneelhaOutputer:
         self.set_database_sheet(wb, data)
 
         ws = wb.add_worksheet("PROPOSTA")
-        ws.activate()
         
         self.set_default_document_format(wb, ws, data)
         self.write_document_header(ws, data)
@@ -357,9 +356,13 @@ class PlaneelhaOutputer:
         last_document_line = self.write_details(ws, data, last_table_line + 2)
         
         ws.set_paper(9)
-        ws.set_margins(0.4, 0.4, 0.4, 0.4)
+        ws.set_margins(1, 1, 1, 1)
+        ws.fit_to_pages(1, 0)
+        ws.center_horizontally()
         ws.print_area("A1:G{}".format(last_document_line))
         ws.repeat_rows(0)
+        
+        ws.activate()
         
         wb.close()
         
