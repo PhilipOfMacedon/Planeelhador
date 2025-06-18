@@ -315,7 +315,7 @@ class PlaneelhaOutputer:
             ws.merge_range("A{}:G{}".format(line, line), bank, A8RML_text)
             line += 1
         statement_line = start_line + len(banks) + 3
-        ws.set_row_pixels(statement_line - 1, data["FORMATS"]["rowHeights"]["rep_x_sign"])
+        ws.set_row_pixels(statement_line - 1, data["FORMATS"]["rowHeights"]["statement"])
         ws.merge_range("A{}:G{}".format(statement_line, statement_line), statement, A8RMJ_text)
         
         rep_line = statement_line + 2
