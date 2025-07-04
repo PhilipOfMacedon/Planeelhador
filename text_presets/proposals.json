@@ -100,10 +100,10 @@
 			"VALIDADE": "90 dias contados da data limite para entrega das propostas.",
 			"BANCOS": [
 				{
-					"NOME": "Nubank",
-					"AG": "0001",
-					"CC": "85341080-6",
-					"PIX": "45.523.823/0001-30"
+					"NOME": "Banco Sicredi",
+					"AG": "0119",
+					"CC": "43173-6",
+					"PIX": "contato.goldcomercial@gmail.com"
 				}
 			]
 		}
