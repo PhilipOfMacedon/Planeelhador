@@ -167,12 +167,14 @@ class PlaneelhaOutputer:
         bd.set_column_pixels(0, 1, data["FORMATS"]["colWidths"]["valores"])
         bd.write_string("A1", "CHAVE", A8BMC_text)
         bd.write_string("A2", "ESTIMADO", A8RMC_text)
-        bd.write_string("A3", "MÍNIMO", A8RMC_text)
-        bd.write_string("A4", "REAJUSTADO", A8RMC_text)
+        bd.write_string("A3", "PROP. INICIAL", A8RMC_text)
+        bd.write_string("A4", "MÍNIMO", A8RMC_text)
+        bd.write_string("A5", "REAJUSTADO", A8RMC_text)
         bd.write_string("B1", "VALOR", A8BMC_text)
         bd.write_string("B2", "H", A8RMC_text)
         bd.write_string("B3", "I", A8RMC_text)
-        bd.write_string("B4", "K", A8RMC_text)
+        bd.write_string("B4", "J", A8RMC_text)
+        bd.write_string("B5", "L", A8RMC_text)
 
     def write_document_header(self, ws, data):
         formats = data["FORMATS"]
@@ -199,7 +201,7 @@ class PlaneelhaOutputer:
         ws.write_number("I1", 1.0, multiplier_text)
 
         ws.write("H2", "VISUALIZAR:", A8BMC_text)
-        ws.data_validation("I2", {"validate": "list", "source": "=BD!$A$2:$A$4"})
+        ws.data_validation("I2", {"validate": "list", "source": "=BD!$A$2:$A$5"})
         ws.write("I2", "ESTIMADO", table_HIDDEN_header2)
  
     def write_item_table(self, ws, data, title, start_line, item_count):
@@ -216,9 +218,10 @@ class PlaneelhaOutputer:
         ws.write("F{}".format(start_line), "V.UNIT.", table_HEAD_text)
         ws.write("G{}".format(start_line), "V.TOTAL.", table_HEAD_text)
         ws.write("H{}".format(start_line), "ESTIMADO", table_HIDDEN_header)
-        ws.write("I{}".format(start_line), "MÍNIMO", table_HIDDEN_header)
-        ws.write("J{}".format(start_line), "CUSTO", table_HIDDEN_header)
-        ws.write("K{}".format(start_line), "REAJUSTADO", table_HIDDEN_header)
+        ws.write("I{}".format(start_line), "PROP. INICIAL", table_HIDDEN_header)
+        ws.write("J{}".format(start_line), "MÍNIMO", table_HIDDEN_header)
+        ws.write("K{}".format(start_line), "CUSTO", table_HIDDEN_header)
+        ws.write("L{}".format(start_line), "REAJUSTADO", table_HIDDEN_header)
         
         for i in range(item_count):
             line = start_line + i + 1
@@ -232,10 +235,12 @@ class PlaneelhaOutputer:
             ws.write_formula("G{}".format(line), \
                 "=E{}*F{}".format(line, line), table_MONEYA8R_text)
             ws.write("H{}".format(line), "", table_HIDDEN_body)
-            ws.write_formula("I{}".format(line), \
-                "=$I$1*J{}".format(line), table_HIDDEN_body)
-            ws.write("J{}".format(line), "", table_HIDDEN_body)
+            ws.write_formula("I{}".format(line),\
+                "=IF(J{}>0,H{},0)".format(line, line), table_HIDDEN_body)
+            ws.write_formula("J{}".format(line), \
+                "=$I$1*K{}".format(line), table_HIDDEN_body)
             ws.write("K{}".format(line), "", table_HIDDEN_body)
+            ws.write("L{}".format(line), "0", table_HIDDEN_body)
 
         tipo_total = "GERAL" if title == "DESCRIÇÃO DO PRODUTO" else title
         line = start_line + item_count + 1
@@ -248,6 +253,7 @@ class PlaneelhaOutputer:
         ws.write("I{}".format(line), "", table_HIDDEN_disabled)
         ws.write("J{}".format(line), "", table_HIDDEN_disabled)
         ws.write("K{}".format(line), "", table_HIDDEN_disabled)
+        ws.write("L{}".format(line), "", table_HIDDEN_disabled)
 
     def write_tables(self, ws, data):
         ws.set_row_pixels(8, data["FORMATS"]["rowHeights"]["tabela_pontas"])
@@ -256,6 +262,7 @@ class PlaneelhaOutputer:
         ws.write("I9", "", table_HIDDEN_disabled)
         ws.write("J9", "", table_HIDDEN_disabled)
         ws.write("K9", "", table_HIDDEN_disabled)
+        ws.write("L9", "", table_HIDDEN_disabled)
         if self.agrupamento == 0:
             self.write_item_table(ws, data, "DESCRIÇÃO DO PRODUTO", 10, self.qtd)
             return self.qtd + 11
