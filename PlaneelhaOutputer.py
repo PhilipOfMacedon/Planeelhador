@@ -231,7 +231,7 @@ class PlaneelhaOutputer:
             ws.write("D{}".format(line), "UN", table_IMUQ_text)
             ws.write("E{}".format(line), "", table_IMUQ_text)
             ws.write_formula("F{}".format(line), \
-                "=TRUNC(INDIRECT(CONCATENATE(VLOOKUP($I$2,BD!$A$2:$B$4,2,FALSE),ROW())),2)", table_MONEYA8R_text)
+                "=TRUNC(INDIRECT(CONCATENATE(VLOOKUP($I$2,BD!$A$2:$B$5,2,FALSE),ROW())),2)", table_MONEYA8R_text)
             ws.write_formula("G{}".format(line), \
                 "=E{}*F{}".format(line, line), table_MONEYA8R_text)
             ws.write("H{}".format(line), "", table_HIDDEN_body)
