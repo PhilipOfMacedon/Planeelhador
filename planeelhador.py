@@ -14,8 +14,10 @@ from ctk_maskedentry import CTkMaskedEntry, Mask
 from tkinter.constants import *
 from tkinter import filedialog
 import os.path
-import math
+import winsound
 from datetime import datetime
+import configparser
+import io
 
 from PlaneelhaOutputer import  PlaneelhaOutputer
 from PlaneelhaOutputer import load_data
@@ -30,6 +32,21 @@ _bgmode = 'light'
 _tabbg1 = '#d9d9d9' 
 _tabbg2 = 'gray40' 
 _lotesSpan = 6
+
+CONFIG_FILE_PATH = "config.txt"
+WAV_FILE_OPEN = "resources/menu.wav"
+WAV_FILE_OK = "resources/menu2.wav"
+
+def play_chirp(file):
+    """Plays the WAV file asynchronously."""
+    try:
+        # winsound.SND_FILENAME: Specifies that the sound is a WAV file.
+        # winsound.SND_ASYNC: Plays the sound immediately and returns control to the script,
+        # so your Tkinter window will show up instantly without waiting for the sound to finish.
+        winsound.PlaySound(file, winsound.SND_FILENAME | winsound.SND_ASYNC)
+    except Exception as e:
+        # This catches errors if the file is not found or is corrupted
+        print(f"Error playing sound: {e}")
 
 def is_valid_datetime(date_string, date_format):
     try:
@@ -118,6 +135,10 @@ class TopLevelFormulario:
             tk.messagebox.showwarning("Atenção", "Insira uma data válida!")
         elif not is_valid_datetime(self.horaAbertura.get(), "%H:%M"):
             tk.messagebox.showwarning("Atenção", "Insira um horário válido!")
+        elif self.empresa.get() == "NONE":
+            tk.messagebox.showwarning("Antenção", "Selecione a empresa correta!")
+        elif self.tipo.get() == "NONE":
+            tk.messagebox.showwarning("Antenção", "Informe o tipo da licitação!")
         elif self.agrupamento.get() == 0 and self.qtd.get() == "":
             tk.messagebox.showwarning("Atenção", "Insira a quantidade de itens!")
         elif self.agrupamento.get() == 1 and (self.qtd.get() == "" or not self.lotesQtd):
@@ -129,6 +150,8 @@ class TopLevelFormulario:
         return False
     
     def button_criar_callback(self):
+        if(not self.mute.get()):
+            play_chirp(WAV_FILE_OK)
         if self.check_form() and self.create_workbook():
             self.exitStatus = True
             self.top.destroy()
@@ -182,9 +205,56 @@ class TopLevelFormulario:
             "caminhoArquivo": self.filePath
         }
 
-    def __init__(self, top=None, savedir = ""):
+    def get_config_parser(self):
+        """Initializes and returns a ConfigParser object."""
+        config = configparser.ConfigParser()
+        
+        # Attempt to read the file directly. configparser handles missing files gracefully.
+        config.read(CONFIG_FILE_PATH)
+        
+        # Ensure the section exists in the in-memory object for consistent access
+        if "Settings" not in config:
+            config.add_section("Settings")
+            
+        return config
+    
+    def load_silence_setting(self):
+        """Reads the 'silence' value from the config file."""
+        config = self.get_config_parser()
+        
+        # Use getint() directly on the known section.
+        # Returns 0 (sound disabled) if the key is missing or the file is empty/corrupted.
+        return config.getint("Settings", 'silencio', fallback=1)
+
+    def save_silence_setting(self, value):
+        """Writes the new 'silence' value (0 or 1) back to the config file."""
+        
+        # 1. Load the existing configuration
+        config = self.get_config_parser()
+        
+        # 2. Set the new value in the in-memory object
+        # We use str(value) because configparser expects string values.
+        config.set("Settings", 'silencio', str(value))
+        
+        # 3. Write the entire configuration object back to the file
+        with open(CONFIG_FILE_PATH, 'w') as f:
+            config.write(f)
+            
+        print(f"Configuration saved: [Settings] silencio = {value}")
+
+    def toggle_silence_config(self):
+        """Saves the current state of the Tkinter variable to the config file."""
+        # Get the value (0 or 1) directly from the Tkinter variable
+        current_value = self.mute.get()
+        self.save_silence_setting(current_value)
+        if not current_value:
+            play_chirp(WAV_FILE_OPEN)
+
+    def __init__(self, top:tk.Tk =None, savedir = ""):
         '''This class configures and populates the toplevel window.
            top is the toplevel containing window.'''
+        
+        
 
         self.FontLabel = ctk.CTkFont(family="Segoe UI", size=12)
         self.FontEntry = ctk.CTkFont(family="Courier New", size=12)
@@ -214,14 +284,15 @@ class TopLevelFormulario:
         self.agrupamento = tk.IntVar()
         self.qtd = tk.StringVar()
         self.lotesQtd = []
+        self.mute = tk.IntVar()
         
         self.orgao.set("Prefeitura Municipal de ")
 
         self.filePath = ""
         self.fileDir = savedir
         
-        self.empresa.set("GI")
-        self.tipo.set("PREGÃO")
+        self.empresa.set("NONE")
+        self.tipo.set("NONE")
         
         dateMask = Mask('fixed', '99/99/9999')
         timeMask = Mask('fixed', '99:99')
@@ -685,5 +756,23 @@ class TopLevelFormulario:
         self.FramesLote = []
         self.LabelsLote = []
         self.EntriesLote = []
+
+        silencio = self.load_silence_setting()
+        self.mute.set(silencio)
+        self.menubar = tk.Menu(top)
+        top.config(menu=self.menubar)
+        self.options_menu = tk.Menu(self.menubar, tearoff=0)
+        self.menubar.add_cascade(label="Opções", menu=self.options_menu)
+
+        self.options_menu.add_checkbutton(
+            label="Desabilitar som", 
+            onvalue=1,            # Set the variable to 1 (silence) when checked
+            offvalue=0,           # Set the variable to 0 (no silence) when unchecked
+            variable=self.mute, # Link to the IntVar
+            command=self.toggle_silence_config # Call the save function when toggled
+        )
+
+        if (not self.mute):
+            play_chirp(WAV_FILE_OPEN)
 
         #load_data()

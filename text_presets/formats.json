@@ -70,6 +70,10 @@
 					"fg_color": "#232323",
 					"font_color": "#ffffff",
 					"border_color": "#000000"
+				},
+				"bad": {
+					"bg_color": "#B00000",
+					"font_color": "#ffffff"
 				}
 			}
 		},
@@ -118,6 +122,12 @@
 			"text_wrap": true
 		},
 
+		"middle_right": {
+			"align": "right",
+			"valign": "vcenter",
+			"text_wrap": true
+		},
+
 		"middle_center": {
 			"align": "center",
 			"valign": "vcenter"
@@ -136,6 +146,12 @@
 		"Arial8Regular": {
 			"font_name": "Arial",
 			"font_size": 8,
+			"text_wrap": true
+		},
+
+		"Arial6Regular": {
+			"font_name": "Arial",
+			"font_size": 6,
 			"text_wrap": true
 		},
 
@@ -158,6 +174,10 @@
 
 		"decimal_2": {
 			"num_format": "#,##0.00"
+		},
+
+		"custom": {
+			"num_format": "\"#\"0"
 		},
 
 		"currency": {

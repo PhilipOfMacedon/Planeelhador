@@ -1,0 +1,3 @@
+[Settings]
+silencio = 0
+

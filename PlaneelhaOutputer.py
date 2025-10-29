@@ -3,7 +3,7 @@ import json
 from datetime import datetime
 import locale
 
-def init_format_variables(wb, formats, empresa):
+def init_format_variables(wb:xlsx.Workbook, formats, empresa):
     global A8RML_text
     global table_HEAD_text
     global table_TITLE_text
@@ -15,6 +15,7 @@ def init_format_variables(wb, formats, empresa):
     global table_HIDDEN_header2
     global table_HIDDEN_body
     global table_HIDDEN_disabled
+    global table_HIDDEN_bad
     global A8RML_text
     global A8RBC_text
     global A8RMC_text
@@ -25,6 +26,8 @@ def init_format_variables(wb, formats, empresa):
     global A8RMC_number
     global A8BBC_text
     global multiplier_text
+    global A6RMC_text
+    global A6RMR_text
     
     A8RML_text = wb.add_format(formats["Arial8Regular"] | formats["middle_left"])
     table_HEAD_text = wb.add_format(formats["Arial8Regular"] | \
@@ -76,6 +79,13 @@ def init_format_variables(wb, formats, empresa):
         formats["border_thin"] | \
         formats["decimal_2"] | \
         formats["BGColors"]["COMMON"]["body"])
+    table_HIDDEN_bad = wb.add_format(formats["Arial8Regular"] | \
+        formats["middle_center"] | \
+        formats["border_thin"] | \
+        formats["decimal_2"] | \
+        formats["BGColors"]["COMMON"]["bad"])
+    A6RMC_text = wb.add_format(formats["Arial6Regular"] | formats["middle_center"] | formats["custom"])
+    A6RMR_text = wb.add_format(formats["Arial6Regular"] | formats["middle_right"])
     A8RML_text = wb.add_format(formats["Arial8Regular"] | formats["middle_left"])
     A8RBC_text = wb.add_format(formats["Arial8Regular"] | formats["bottom_center"])
     A8RMC_text = wb.add_format(formats["Arial8Regular"] | formats["middle_center"])
@@ -204,7 +214,7 @@ class PlaneelhaOutputer:
         ws.data_validation("I2", {"validate": "list", "source": "=BD!$A$2:$A$5"})
         ws.write("I2", "ESTIMADO", table_HIDDEN_header2)
  
-    def write_item_table(self, ws, data, title, start_line, item_count):
+    def write_item_table(self, ws:xlsx.workbook.Worksheet, data, title, start_line, item_count):
         marca = data["PROPOSALS"][self.empresa]["MARCA"]
         
         ws.set_row_pixels(start_line - 1, data["FORMATS"]["rowHeights"]["tabela_pontas"])
@@ -236,11 +246,17 @@ class PlaneelhaOutputer:
                 "=E{}*F{}".format(line, line), table_MONEYA8R_text)
             ws.write("H{}".format(line), "", table_HIDDEN_body)
             ws.write_formula("I{}".format(line),\
-                "=IF(J{}>0,H{},0)".format(line, line), table_HIDDEN_body)
+                "IF(J{}>0,IF(H{}>0,IF(H{}>=J{},H{},0),J{}),0)".format(line, line, line, line, line, line), table_HIDDEN_body)
             ws.write_formula("J{}".format(line), \
                 "=$I$1*K{}".format(line), table_HIDDEN_body)
             ws.write("K{}".format(line), "", table_HIDDEN_body)
             ws.write("L{}".format(line), "0", table_HIDDEN_body)
+        
+        ws.conditional_format(f"H{start_line}:L{start_line + item_count}", {
+            'type': 'formula',
+            'criteria': f'=AND($I{start_line}=0, $J{start_line}<>0)',
+            'format': table_HIDDEN_bad
+        })
 
         tipo_total = "GERAL" if title == "DESCRIÇÃO DO PRODUTO" else title
         line = start_line + item_count + 1
@@ -343,6 +359,10 @@ class PlaneelhaOutputer:
         
         return sign_line + 3
 
+    def write_budget_code(self, ws:xlsx.workbook.Worksheet, line):
+        ws.write(f"F{line}", "Orç. No.:", A6RMR_text)
+        ws.write(f"G{line}", "", A6RMC_text)
+
     def generate_file(self):
         data = load_data()
         
@@ -360,7 +380,8 @@ class PlaneelhaOutputer:
         self.set_default_document_format(wb, ws, data)
         self.write_document_header(ws, data)
         last_table_line = self.write_tables(ws, data)
-        last_document_line = self.write_details(ws, data, last_table_line + 2)
+        self.write_budget_code(ws, last_table_line + 1)
+        last_document_line = self.write_details(ws, data, last_table_line + 3)
         
         ws.set_paper(9)
         ws.set_margins(1, 1, 1, 1)
