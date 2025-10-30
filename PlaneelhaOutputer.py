@@ -24,6 +24,7 @@ def init_format_variables(wb:xlsx.Workbook, formats, empresa):
     global A8BMC_text
     global A8BUMC_text
     global A8RMC_number
+    global A8BTC_text
     global A8BBC_text
     global multiplier_text
     global A6RMC_text
@@ -87,13 +88,14 @@ def init_format_variables(wb:xlsx.Workbook, formats, empresa):
     A6RMC_text = wb.add_format(formats["Arial6Regular"] | formats["middle_center"] | formats["custom"])
     A6RMR_text = wb.add_format(formats["Arial6Regular"] | formats["middle_right"])
     A8RML_text = wb.add_format(formats["Arial8Regular"] | formats["middle_left"])
-    A8RBC_text = wb.add_format(formats["Arial8Regular"] | formats["bottom_center"])
     A8RMC_text = wb.add_format(formats["Arial8Regular"] | formats["middle_center"])
+    A8RBC_text = wb.add_format(formats["Arial8Regular"] | formats["bottom_center"])
     A8RMJ_text = wb.add_format(formats["Arial8Regular"] | formats["middle_just"])
     A8BML_text = wb.add_format(formats["Arial8Regular"] | formats["bold_text"] | formats["middle_left"])
     A8BMC_text = wb.add_format(formats["Arial8Regular"] | formats["bold_text"] | formats["middle_center"])
     A8BUMC_text = wb.add_format(formats["Arial8Regular"] | formats["bold_underline_text"] | formats["middle_center"])
     A8RMC_number = wb.add_format(formats["Arial8Regular"] | formats["middle_center"] | formats["decimal_2"])
+    A8BTC_text = wb.add_format(formats["Arial8Regular"] | formats["bold_text"] | formats["top_center"])
     A8BBC_text = wb.add_format(formats["Arial8Regular"] | formats["bold_text"] | formats["bottom_center"])
     multiplier_text = wb.add_format(formats["multiplier"])
 
@@ -304,7 +306,7 @@ class PlaneelhaOutputer:
                 ws.write("K{}".format(line), "", table_HIDDEN_disabled)
             return line
 
-    def write_details(self, ws, data, start_line):
+    def write_details(self, ws:xlsx.workbook.Worksheet, data, start_line):
         proposal = data["PROPOSALS"][self.empresa]
         statement = data["STATEMENT"]
         rep = data["REPS"][self.empresa]
@@ -354,8 +356,10 @@ class PlaneelhaOutputer:
         ws.merge_range("A{}:G{}".format(sign_line, sign_line), sign_place_time, A8BBC_text)
         ws.set_row_pixels(sign_line, data["FORMATS"]["rowHeights"]["sign"])
         ws.merge_range("A{}:G{}".format(sign_line + 1, sign_line + 1), sign_underline, A8BBC_text)
+        ws.insert_image(sign_line, 0, sign["SIGNATURE"]["IMAGE"], sign["SIGNATURE"]["PROPS"])
         ws.merge_range("A{}:G{}".format(sign_line + 2, sign_line + 2), sign_name, A8BBC_text)
-        ws.merge_range("A{}:G{}".format(sign_line + 3, sign_line + 3), sign_id, A8BBC_text)
+        ws.merge_range("A{}:G{}".format(sign_line + 3, sign_line + 3), sign_id, A8BTC_text)
+        ws.set_row_pixels(sign_line + 2, (data["FORMATS"]["rowHeights"]["rep_x_sign"]/1.5))
         
         return sign_line + 3
 

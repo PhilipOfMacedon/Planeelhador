@@ -3,13 +3,33 @@
 		"CRISTIAN": {
 			"NOME": "CRISTIAN MARTINS DE SOUZA",
 			"CPF": "117.218.136-59",
-			"RG": "MG-16.069.074/SSP MG"
+			"RG": "MG-16.069.074/SSP MG",
+			"SIGNATURE": {
+				"IMAGE": "images/CRISTIAN.png",
+				"PROPS": {
+					"x_offset": 200,
+					"y_offset": -34,
+					"x_scale": 1.25,
+					"y_scale": 1.15,
+					"object_position": 2
+				}
+			}
 		},
 
 		"CHARLES": {
 			"NOME": "CHARLES SILVA NUNES",
 			"CPF": "061.864.076-24",
-			"RG": "MG-10.023.063/SSP-MG"
+			"RG": "MG-10.023.063/SSP-MG",
+			"SIGNATURE": {
+				"IMAGE": "images/CHARLES.png",
+				"PROPS": {
+					"x_offset": 250,
+					"y_offset": 4,
+					"x_scale": 1.25,
+					"y_scale": 1.15,
+					"object_position": 2
+				}
+			}
 		}
 	}
 }

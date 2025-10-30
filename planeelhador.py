@@ -772,7 +772,7 @@ class TopLevelFormulario:
             command=self.toggle_silence_config # Call the save function when toggled
         )
 
-        if (not self.mute):
+        if (not self.mute.get()):
             play_chirp(WAV_FILE_OPEN)
 
         #load_data()
