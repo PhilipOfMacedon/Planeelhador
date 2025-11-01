@@ -37,17 +37,6 @@ CONFIG_FILE_PATH = "config.txt"
 WAV_FILE_OPEN = "resources/menu.wav"
 WAV_FILE_OK = "resources/menu2.wav"
 
-def play_chirp(file):
-    """Plays the WAV file asynchronously."""
-    try:
-        # winsound.SND_FILENAME: Specifies that the sound is a WAV file.
-        # winsound.SND_ASYNC: Plays the sound immediately and returns control to the script,
-        # so your Tkinter window will show up instantly without waiting for the sound to finish.
-        winsound.PlaySound(file, winsound.SND_FILENAME | winsound.SND_ASYNC)
-    except Exception as e:
-        # This catches errors if the file is not found or is corrupted
-        print(f"Error playing sound: {e}")
-
 def is_valid_datetime(date_string, date_format):
     try:
         datetime.strptime(date_string, date_format)
@@ -56,6 +45,18 @@ def is_valid_datetime(date_string, date_format):
         return False
 
 class TopLevelFormulario:
+
+    def play_chirp(self, file):
+        """Plays the WAV file asynchronously."""
+        if(not self.mute.get()):
+            try:
+                # winsound.SND_FILENAME: Specifies that the sound is a WAV file.
+                # winsound.SND_ASYNC: Plays the sound immediately and returns control to the script,
+                # so your Tkinter window will show up instantly without waiting for the sound to finish.
+                winsound.PlaySound(file, winsound.SND_FILENAME | winsound.SND_ASYNC)
+            except Exception as e:
+                # This catches errors if the file is not found or is corrupted
+                print(f"Error playing sound: {e}")
 
     def removeAllLotes(self):
         for frame in self.FramesLote:
@@ -83,6 +84,7 @@ class TopLevelFormulario:
             return False
 
     def button_atualizar_callback(self):
+        self.play_chirp(WAV_FILE_OK)
         qtd = 0
         try:
             qtd = int(self.qtd.get())
@@ -125,6 +127,7 @@ class TopLevelFormulario:
                 self.CanvasLotesQtd.columnconfigure(0, weight=1)
 
     def check_form(self):
+        ok = False
         if self.orgao.get() == "":
             tk.messagebox.showwarning("Atenção", "Falta o nome do órgão!")
         elif self.codLicitacao.get() == "":
@@ -141,17 +144,26 @@ class TopLevelFormulario:
             tk.messagebox.showwarning("Antenção", "Informe o tipo da licitação!")
         elif self.agrupamento.get() == 0 and self.qtd.get() == "":
             tk.messagebox.showwarning("Atenção", "Insira a quantidade de itens!")
-        elif self.agrupamento.get() == 1 and (self.qtd.get() == "" or not self.lotesQtd):
-            tk.messagebox.showwarning("Atenção", "Se estiver trabalhando com lotes, insira a quantidade e atualize a lista!")
-        elif self.agrupamento.get() == 1 and int(self.qtd.get()) != len(self.lotesQtd):
-            tk.messagebox.showwarning("Atenção", "A quantidade de lotes não bate com o número de campos, atualize a lista!")
-        else:
-            return True
-        return False
+        elif self.agrupamento.get() == 1:
+            if self.qtd.get() == "" or not self.lotesQtd:
+                tk.messagebox.showwarning("Atenção", "Se estiver trabalhando com lotes, insira a quantidade e atualize a lista!")
+            elif int(self.qtd.get()) != len(self.lotesQtd):
+                tk.messagebox.showwarning("Atenção", "A quantidade de lotes não bate com o número de campos, atualize a lista!")
+            else:
+                test: int
+                for campo in self.lotesQtd:
+                    try:
+                        test = int(campo.get())
+                    except Exception:
+                        test = 0
+                    if not test:
+                        tk.messagebox.showwarning("Atenção", "Insira as quantidades de cada lote corretamente!")
+                        break
+                ok = test > 0
+        return ok
     
     def button_criar_callback(self):
-        if(not self.mute.get()):
-            play_chirp(WAV_FILE_OK)
+        self.play_chirp(WAV_FILE_OK)
         if self.check_form() and self.create_workbook():
             self.exitStatus = True
             self.top.destroy()
@@ -247,8 +259,7 @@ class TopLevelFormulario:
         # Get the value (0 or 1) directly from the Tkinter variable
         current_value = self.mute.get()
         self.save_silence_setting(current_value)
-        if not current_value:
-            play_chirp(WAV_FILE_OPEN)
+        self.play_chirp(WAV_FILE_OPEN)
 
     def __init__(self, top:tk.Tk =None, savedir = ""):
         '''This class configures and populates the toplevel window.
@@ -772,7 +783,6 @@ class TopLevelFormulario:
             command=self.toggle_silence_config # Call the save function when toggled
         )
 
-        if (not self.mute.get()):
-            play_chirp(WAV_FILE_OPEN)
+        self.play_chirp(WAV_FILE_OPEN)
 
         #load_data()
