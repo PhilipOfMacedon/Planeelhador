@@ -16,6 +16,8 @@ def init_format_variables(wb:xlsx.Workbook, formats, empresa):
     global table_HIDDEN_body
     global table_HIDDEN_disabled
     global table_HIDDEN_bad
+    global table_FILTER_header
+    global table_FILTER_body
     global A8RML_text
     global A8RBC_text
     global A8RMC_text
@@ -35,56 +37,66 @@ def init_format_variables(wb:xlsx.Workbook, formats, empresa):
         formats["middle_center"] | \
         formats["bold_text"] | \
         formats["border_thin"] | \
-        formats["BGColors"][empresa]["title"])
+        formats["COLOR_THEMES"][empresa]["title"])
     table_TITLE_text = wb.add_format(formats["Arial8Regular"] | \
         formats["middle_center"] | \
         formats["bold_text"] | \
         formats["border_thin"] | \
-        formats["BGColors"][empresa]["body"])
+        formats["COLOR_THEMES"][empresa]["body"])
     table_DESC_text = wb.add_format(formats["Arial8Regular"] | \
         formats["top_left"] | \
         formats["border_thin"] | \
-        formats["BGColors"][empresa]["body"])
+        formats["COLOR_THEMES"][empresa]["body"])
     table_IMUQ_text = wb.add_format(formats["Arial8Regular"] | \
         formats["middle_center"] | \
         formats["decimal"] | \
         formats["border_thin"] | \
-        formats["BGColors"][empresa]["body"])
+        formats["COLOR_THEMES"][empresa]["body"])
     table_MONEYA8R_text = wb.add_format(formats["Arial8Regular"] | \
         formats["middle_center"] | \
         formats["currency"] | \
         formats["border_thin"] | \
-        formats["BGColors"][empresa]["body"])
+        formats["COLOR_THEMES"][empresa]["body"])
     table_MONEYA8B_text = wb.add_format(formats["Arial8Regular"] | \
         formats["middle_center"] | \
         formats["bold_text"] | \
         formats["currency"] | \
         formats["border_thin"] | \
-        formats["BGColors"][empresa]["body"])
+        formats["COLOR_THEMES"][empresa]["body"])
     table_HIDDEN_header = wb.add_format(formats["Arial8Regular"] | \
         formats["middle_center"] | \
         formats["bold_text"] | \
         formats["border_thin"] | \
-        formats["BGColors"]["COMMON"]["header"])
+        formats["COLOR_THEMES"]["COMMON"]["header"])
     table_HIDDEN_header2 = wb.add_format(formats["Arial8Regular"] | \
         formats["middle_center"] | \
         formats["bold_text"] | \
         formats["border_thick"] | \
-        formats["BGColors"]["COMMON"]["header_2"])
+        formats["COLOR_THEMES"]["COMMON"]["header_2"])
     table_HIDDEN_disabled = wb.add_format(formats["Arial8Regular"] | \
         formats["middle_center"] | \
         formats["border_thin"] | \
-        formats["BGColors"]["COMMON"]["disabled"])
+        formats["COLOR_THEMES"]["COMMON"]["disabled"])
     table_HIDDEN_body = wb.add_format(formats["Arial8Regular"] | \
         formats["middle_center"] | \
         formats["border_thin"] | \
         formats["decimal_2"] | \
-        formats["BGColors"]["COMMON"]["body"])
+        formats["COLOR_THEMES"]["COMMON"]["body"])
     table_HIDDEN_bad = wb.add_format(formats["Arial8Regular"] | \
         formats["middle_center"] | \
         formats["border_thin"] | \
         formats["decimal_2"] | \
-        formats["BGColors"]["COMMON"]["bad"])
+        formats["COLOR_THEMES"]["COMMON"]["bad"])
+    table_FILTER_header = wb.add_format(formats["Arial8Regular"] | \
+        formats["middle_center"] | \
+        formats["bold_text"] | \
+        formats["border_thin"] | \
+        formats["COLOR_THEMES"]["COMMON"]["FILTER"]["title"])
+    table_FILTER_body = wb.add_format(formats["Arial8Regular"] | \
+        formats["middle_center"] | \
+        formats["border_thin"] | \
+        formats["COLOR_THEMES"]["COMMON"]["FILTER"]["body"])
+
     A6RMC_text = wb.add_format(formats["Arial6Regular"] | formats["middle_center"] | formats["custom"])
     A6RMR_text = wb.add_format(formats["Arial6Regular"] | formats["middle_right"])
     A8RML_text = wb.add_format(formats["Arial8Regular"] | formats["middle_left"])
@@ -215,8 +227,25 @@ class PlaneelhaOutputer:
         ws.write("H2", "VISUALIZAR:", A8BMC_text)
         ws.data_validation("I2", {"validate": "list", "source": "=BD!$A$2:$A$5"})
         ws.write("I2", "ESTIMADO", table_HIDDEN_header2)
- 
-    def write_item_table(self, ws:xlsx.workbook.Worksheet, data, title, start_line, item_count):
+
+    def write_filter_column(self, ws:xlsx.workbook.Worksheet, start_line, item_count, batch_mode=False):
+        first_item = start_line + 1
+        last_item = start_line + item_count
+        last_line = start_line + item_count + 1
+        for i in range(item_count + 2):
+            line = start_line + i
+            if batch_mode:
+                ws.write_formula(f"M{line}", \
+                        f"=IF(NOT(COUNTIF($F${first_item}:$F${last_item},\">0\")),\"X\",\"\")", table_FILTER_body)
+                ws.write("M{}".format(line + 1), "", table_HIDDEN_disabled)
+            else:
+                if line == start_line or line == last_line:
+                    ws.write("M{}".format(line), "", table_HIDDEN_disabled)
+                else:
+                    ws.write_formula(f"M{line}", \
+                        f"=IF(F{line}=0,\"X\",\"\")", table_FILTER_body)
+
+    def write_item_table(self, ws:xlsx.workbook.Worksheet, data, title, start_line, item_count, batch_mode=False):
         marca = data["PROPOSALS"][self.empresa]["MARCA"]
         
         ws.set_row_pixels(start_line - 1, data["FORMATS"]["rowHeights"]["tabela_pontas"])
@@ -234,6 +263,9 @@ class PlaneelhaOutputer:
         ws.write("J{}".format(start_line), "MÍNIMO", table_HIDDEN_header)
         ws.write("K{}".format(start_line), "CUSTO", table_HIDDEN_header)
         ws.write("L{}".format(start_line), "REAJUSTADO", table_HIDDEN_header)
+
+        first_item = start_line + 1
+        last_item = start_line+ item_count
         
         for i in range(item_count):
             line = start_line + i + 1
@@ -247,18 +279,40 @@ class PlaneelhaOutputer:
             ws.write_formula("G{}".format(line), \
                 "=E{}*F{}".format(line, line), table_MONEYA8R_text)
             ws.write("H{}".format(line), "", table_HIDDEN_body)
-            ws.write_formula("I{}".format(line),\
-                "IF(J{}>0,IF(H{}>0,IF(H{}>=J{},H{},0),J{}),0)".format(line, line, line, line, line, line), table_HIDDEN_body)
+            if batch_mode:
+                range_E = f"$E${first_item}:$E${last_item}"
+                range_H = f"$H${first_item}:$H${last_item}"
+                range_J = f"$J${first_item}:$J${last_item}"
+
+                sumprod_1 = f"SUMPRODUCT({range_H},{range_E})"
+                sumprod_2 = f"SUMPRODUCT({range_J},{range_E})"
+
+                condition_B = f"COUNTA({range_H})"
+                true_B = f"IF({sumprod_1}>={sumprod_2},H{line},0)"
+                condition_A = f"COUNTIF({range_J},\"=0\")=0"
+                true_A = f"IF({condition_B},{true_B},J{line})"
+                ws.write_formula(f"I{line}",\
+                    f"IF({condition_A},{true_A},0)", table_HIDDEN_body)
+            else:
+                ws.write_formula(f"I{line}",\
+                    f"IF(J{line}>0,IF(H{line}>0,IF(H{line}>=J{line},H{line},0),J{line}),0)", table_HIDDEN_body)
             ws.write_formula("J{}".format(line), \
                 "=$I$1*K{}".format(line), table_HIDDEN_body)
             ws.write("K{}".format(line), "", table_HIDDEN_body)
             ws.write("L{}".format(line), "0", table_HIDDEN_body)
         
-        ws.conditional_format(f"H{start_line}:L{start_line + item_count}", {
-            'type': 'formula',
-            'criteria': f'=AND($I{start_line}=0, $J{start_line}<>0)',
-            'format': table_HIDDEN_bad
-        })
+        if batch_mode:
+            ws.conditional_format(f"H{first_item}:L{last_item}", {
+                'type': 'formula',
+                'criteria': f'=AND($H{first_item}>0, $J{first_item}>$H{first_item})',
+                'format': table_HIDDEN_bad
+            })
+        else:
+            ws.conditional_format(f"H{first_item}:L{last_item}", {
+                'type': 'formula',
+                'criteria': f'=AND($I{first_item}=0, $J{first_item}<>0)',
+                'format': table_HIDDEN_bad
+            })
 
         tipo_total = "GERAL" if title == "DESCRIÇÃO DO PRODUTO" else title
         line = start_line + item_count + 1
@@ -273,7 +327,7 @@ class PlaneelhaOutputer:
         ws.write("K{}".format(line), "", table_HIDDEN_disabled)
         ws.write("L{}".format(line), "", table_HIDDEN_disabled)
 
-    def write_tables(self, ws, data):
+    def write_tables(self, ws:xlsx.workbook.Worksheet, data):
         ws.set_row_pixels(8, data["FORMATS"]["rowHeights"]["tabela_pontas"])
         ws.merge_range("A9:G9", "RELAÇÃO DE ITENS", table_TITLE_text)
         ws.write("H9", "", table_HIDDEN_disabled)
@@ -281,9 +335,12 @@ class PlaneelhaOutputer:
         ws.write("J9", "", table_HIDDEN_disabled)
         ws.write("K9", "", table_HIDDEN_disabled)
         ws.write("L9", "", table_HIDDEN_disabled)
+        ws.write("M9", "FILTRO", table_FILTER_header)
+        last_line: int
         if self.agrupamento == 0:
             self.write_item_table(ws, data, "DESCRIÇÃO DO PRODUTO", 10, self.qtd)
-            return self.qtd + 11
+            self.write_filter_column(ws, 10, self.qtd)
+            last_line = self.qtd + 11
         else:
             nome = "LOTE {}"
             item_sum = 0
@@ -293,7 +350,8 @@ class PlaneelhaOutputer:
                     skipped += 1
                     continue
                 start_line = 10 + item_sum + 2 * (lote - skipped)
-                self.write_item_table(ws, data, nome.format(lote + 1), start_line, self.lotesQtd[lote])
+                self.write_item_table(ws, data, nome.format(lote + 1), start_line, self.lotesQtd[lote], True)
+                self.write_filter_column(ws, start_line, self.lotesQtd[lote], True)
                 item_sum += self.lotesQtd[lote]
             line = 10 + item_sum + 2 * (self.qtd - skipped)
             if self.qtd - skipped > 1:
@@ -304,7 +362,11 @@ class PlaneelhaOutputer:
                 ws.write("I{}".format(line), "", table_HIDDEN_disabled)
                 ws.write("J{}".format(line), "", table_HIDDEN_disabled)
                 ws.write("K{}".format(line), "", table_HIDDEN_disabled)
-            return line
+            last_line = line
+        
+        ws.autofilter(f"M9:M{last_line - 1}")
+        
+        return last_line
 
     def write_details(self, ws:xlsx.workbook.Worksheet, data, start_line):
         proposal = data["PROPOSALS"][self.empresa]

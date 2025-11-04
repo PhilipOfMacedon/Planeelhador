@@ -7,7 +7,7 @@
 			"valign": "vcenter"
 		},
 
-		"BGColors": {
+		"COLOR_THEMES": {
 			"GI": {
 				"body": {
 					"fg_color": "#D8E4BC",
@@ -74,6 +74,16 @@
 				"bad": {
 					"bg_color": "#B00000",
 					"font_color": "#ffffff"
+				},
+				"FILTER": {
+					"body": {
+						"fg_color": "#E4DFEC",
+						"font_color": "#000000"
+					},
+					"title": {
+						"fg_color": "#403151",
+						"font_color": "#ffffff"
+					}
 				}
 			}
 		},

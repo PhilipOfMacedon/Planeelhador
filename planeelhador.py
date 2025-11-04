@@ -150,16 +150,19 @@ class TopLevelFormulario:
             elif int(self.qtd.get()) != len(self.lotesQtd):
                 tk.messagebox.showwarning("Atenção", "A quantidade de lotes não bate com o número de campos, atualize a lista!")
             else:
-                test: int
-                for campo in self.lotesQtd:
-                    try:
-                        test = int(campo.get())
-                    except Exception:
-                        test = 0
-                    if not test:
-                        tk.messagebox.showwarning("Atenção", "Insira as quantidades de cada lote corretamente!")
-                        break
-                ok = test > 0
+                # test: int
+                # for campo in self.lotesQtd:
+                #     try:
+                #         test = int(campo.get())
+                #     except Exception:
+                #         test = 0
+                #     if not test:
+                #         tk.messagebox.showwarning("Atenção", "Insira as quantidades de cada lote corretamente!")
+                #         break
+                # ok = test > 0
+                ok = True
+        else:
+            ok = True
         return ok
     
     def button_criar_callback(self):
