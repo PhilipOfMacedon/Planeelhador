@@ -12,6 +12,7 @@
 				"CEP": "35162-038"
 			},
 			"PROPOSTA": "MATERIAIS GRÁFICOS",
+			"MULTIPLIER": 1.0,
 			"CONDICOES": "em até 30 dias da data da liberação da NF pelo setor competente.",
 			"VALIDADE": "90 dias contados da data limite para entrega das propostas.",
 			"BANCOS": [
@@ -36,6 +37,7 @@
 				"CEP": "35162-038"
 			},
 			"PROPOSTA": "MATERIAIS DE INFORMÁTICA",
+			"MULTIPLIER": 1.5,
 			"CONDICOES": "em até 30 dias da data da liberação da NF pelo setor competente.",
 			"VALIDADE": "90 dias contados da data limite para entrega das propostas.",
 			"BANCOS": [
@@ -72,6 +74,7 @@
 				"CEP": "35162-038"
 			},
 			"PROPOSTA": "MATERIAIS GRÁFICOS",
+			"MULTIPLIER": 1.0,
 			"CONDICOES": "em até 30 dias da data da liberação da NF pelo setor competente.",
 			"VALIDADE": "90 dias contados da data limite para entrega das propostas.",
 			"BANCOS": [
@@ -96,6 +99,7 @@
 				"CEP": "35063-001"
 			},
 			"PROPOSTA": "MATERIAIS DE INFORMÁTICA",
+			"MULTIPLIER": 1.5,
 			"CONDICOES": "em até 30 dias da data da liberação da NF pelo setor competente.",
 			"VALIDADE": "90 dias contados da data limite para entrega das propostas.",
 			"BANCOS": [

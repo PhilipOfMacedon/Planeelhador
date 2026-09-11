@@ -18,6 +18,9 @@ def init_format_variables(wb:xlsx.Workbook, formats, empresa):
     global table_HIDDEN_bad
     global table_FILTER_header
     global table_FILTER_body
+    global table_MULTIPLIER_header
+    global table_MULTIPLIER_body_disabled
+    global table_MULTIPLIER_body_enabled
     global A8RML_text
     global A8RBC_text
     global A8RMC_text
@@ -96,6 +99,22 @@ def init_format_variables(wb:xlsx.Workbook, formats, empresa):
         formats["middle_center"] | \
         formats["border_thin"] | \
         formats["COLOR_THEMES"]["COMMON"]["FILTER"]["body"])
+    table_MULTIPLIER_header = wb.add_format(formats["Arial8Regular"] | \
+        formats["middle_center"] | \
+        formats["bold_text"] | \
+        formats["border_thin"] | \
+        formats["COLOR_THEMES"]["COMMON"]["MULTIPLIER"]["title"])
+    table_MULTIPLIER_body_disabled = wb.add_format(formats["Arial8Regular"] | \
+        formats["middle_center"] | \
+        formats["decimal_2"] | \
+        formats["border_thin"] | \
+        formats["COLOR_THEMES"]["COMMON"]["MULTIPLIER"]["body_disabled"])
+    table_MULTIPLIER_body_enabled = wb.add_format(formats["Arial8Regular"] | \
+        formats["middle_center"] | \
+        formats["decimal_2"] | \
+        formats["bold_text"] | \
+        formats["border_thin"] | \
+        formats["COLOR_THEMES"]["COMMON"]["MULTIPLIER"]["body_enabled"])
 
     A6RMC_text = wb.add_format(formats["Arial6Regular"] | formats["middle_center"] | formats["custom"])
     A6RMR_text = wb.add_format(formats["Arial6Regular"] | formats["middle_right"])
@@ -203,7 +222,7 @@ class PlaneelhaOutputer:
     def write_document_header(self, ws, data):
         formats = data["FORMATS"]
         header = data["HEADER"]
-        proposal = data["PROPOSALS"][self.empresa]["PROPOSTA"]
+        proposal = data["PROPOSALS"][self.empresa]
         
         ws.insert_image(0, 1, "./images/" + self.empresa + ".png", data["FORMATS"]["logo"])   
         ws.merge_range("A2:G2", header["A2"], A8BML_text)
@@ -217,12 +236,12 @@ class PlaneelhaOutputer:
         process = "" if self.codProcesso == "" else "PROCESSO LICITATÓRIO Nº {} - ".format(self.codProcesso)
         lictype = "Menor preço por {}".format("ITEM" if self.agrupamento == 0 else "LOTE")
         opening = "DATA E HORÁRIO DE ABERTURA: {}, {} de {} de {} às {} horas".format(self.diaSemana, self.dia, self.mesExtenso, self.ano, self.hora)
-        ws.merge_range("A5:G5", header["A5"].format(proposal), A8BMC_text)
+        ws.merge_range("A5:G5", header["A5"].format(proposal["PROPOSTA"]), A8BMC_text)
         ws.merge_range("A6:G6", bid + process + lictype, A8BMC_text)
         ws.merge_range("A7:G7", opening, A8BMC_text)
         
         ws.write("H1", "MULT. MÍNIMO:", A8BMC_text)
-        ws.write_number("I1", 1.0, multiplier_text)
+        ws.write_number("I1", proposal["MULTIPLIER"], multiplier_text)
 
         ws.write("H2", "VISUALIZAR:", A8BMC_text)
         ws.data_validation("I2", {"validate": "list", "source": "=BD!$A$2:$A$5"})
@@ -235,14 +254,14 @@ class PlaneelhaOutputer:
         for i in range(item_count + 2):
             line = start_line + i
             if batch_mode:
-                ws.write_formula(f"M{line}", \
+                ws.write_formula(f"N{line}", \
                         f"=IF(NOT(COUNTIF($F${first_item}:$F${last_item},\">0\")),\"X\",\"\")", table_FILTER_body)
-                ws.write("M{}".format(line + 1), "", table_HIDDEN_disabled)
+                ws.write("N{}".format(line + 1), "", table_HIDDEN_disabled)
             else:
                 if line == start_line or line == last_line:
-                    ws.write("M{}".format(line), "", table_HIDDEN_disabled)
+                    ws.write("N{}".format(line), "", table_HIDDEN_disabled)
                 else:
-                    ws.write_formula(f"M{line}", \
+                    ws.write_formula(f"N{line}", \
                         f"=IF(F{line}=0,\"X\",\"\")", table_FILTER_body)
 
     def write_item_table(self, ws:xlsx.workbook.Worksheet, data, title, start_line, item_count, batch_mode=False):
@@ -263,6 +282,7 @@ class PlaneelhaOutputer:
         ws.write("J{}".format(start_line), "MÍNIMO", table_HIDDEN_header)
         ws.write("K{}".format(start_line), "CUSTO", table_HIDDEN_header)
         ws.write("L{}".format(start_line), "REAJUSTADO", table_HIDDEN_header)
+        ws.write("M{}".format(start_line), "", table_HIDDEN_disabled)
 
         first_item = start_line + 1
         last_item = start_line+ item_count
@@ -297,9 +317,10 @@ class PlaneelhaOutputer:
                 ws.write_formula(f"I{line}",\
                     f"IF(J{line}>0,IF(H{line}>0,IF(H{line}>=J{line},H{line},0),J{line}),0)", table_HIDDEN_body)
             ws.write_formula("J{}".format(line), \
-                "=$I$1*K{}".format(line), table_HIDDEN_body)
+                f"IF(ISBLANK(M{line}),$I$1*K{line},M{line}*K{line})", table_HIDDEN_body)
             ws.write("K{}".format(line), "", table_HIDDEN_body)
             ws.write("L{}".format(line), "0", table_HIDDEN_body)
+            ws.write("M{}".format(line), "", table_MULTIPLIER_body_disabled)
         
         if batch_mode:
             ws.conditional_format(f"H{first_item}:L{last_item}", {
@@ -313,6 +334,16 @@ class PlaneelhaOutputer:
                 'criteria': f'=AND($I{first_item}=0, $J{first_item}<>0)',
                 'format': table_HIDDEN_bad
             })
+        ws.conditional_format(f"M{first_item}:M{last_item}", {
+            'type': 'formula',
+            'criteria': f'=ISBLANK($M{first_item})',
+            'format': table_MULTIPLIER_body_disabled
+        })
+        ws.conditional_format(f"M{first_item}:M{last_item}", {
+            'type': 'formula',
+            'criteria': f'=NOT(ISBLANK($M{first_item}))',
+            'format': table_MULTIPLIER_body_enabled
+        })
 
         tipo_total = "GERAL" if title == "DESCRIÇÃO DO PRODUTO" else title
         line = start_line + item_count + 1
@@ -326,6 +357,7 @@ class PlaneelhaOutputer:
         ws.write("J{}".format(line), "", table_HIDDEN_disabled)
         ws.write("K{}".format(line), "", table_HIDDEN_disabled)
         ws.write("L{}".format(line), "", table_HIDDEN_disabled)
+        ws.write("M{}".format(line), "", table_HIDDEN_disabled)
 
     def write_tables(self, ws:xlsx.workbook.Worksheet, data):
         ws.set_row_pixels(8, data["FORMATS"]["rowHeights"]["tabela_pontas"])
@@ -335,7 +367,8 @@ class PlaneelhaOutputer:
         ws.write("J9", "", table_HIDDEN_disabled)
         ws.write("K9", "", table_HIDDEN_disabled)
         ws.write("L9", "", table_HIDDEN_disabled)
-        ws.write("M9", "FILTRO", table_FILTER_header)
+        ws.write("M9", "MULT.", table_MULTIPLIER_header)
+        ws.write("N9", "FILTRO", table_FILTER_header)
         last_line: int
         if self.agrupamento == 0:
             self.write_item_table(ws, data, "DESCRIÇÃO DO PRODUTO", 10, self.qtd)
@@ -364,7 +397,7 @@ class PlaneelhaOutputer:
                 ws.write("K{}".format(line), "", table_HIDDEN_disabled)
             last_line = line
         
-        ws.autofilter(f"M9:M{last_line - 1}")
+        ws.autofilter(f"N9:N{last_line - 1}")
         
         return last_line
 

@@ -84,6 +84,22 @@
 						"fg_color": "#403151",
 						"font_color": "#ffffff"
 					}
+				},
+				"MULTIPLIER": {
+					"body_disabled": {
+						"fg_color": "#DCE6F1",
+						"bg_color": "#DCE6F1",
+						"font_color": "#000000"
+					},
+					"body_enabled": {
+						"fg_color": "#538DD5",
+						"bg_color": "#538DD5",
+						"font_color": "#000000"
+					},
+					"title": {
+						"fg_color": "#002060",
+						"font_color": "#ffffff"
+					}
 				}
 			}
 		},
